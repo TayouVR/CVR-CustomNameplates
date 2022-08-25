@@ -15,8 +15,8 @@ using MelonLoader;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: MelonInfo(typeof(Tayou.CustomNameplatesMod), "Nocturnal ReWorked Plates", "1.2", "Edward7")]
-[assembly: MelonColor(System.ConsoleColor.DarkMagenta)]
+[assembly: MelonInfo(typeof(Tayou.CustomNameplatesMod), "Custom Nameplates", "1.0.0", "Tayou")]
+[assembly: MelonColor(System.ConsoleColor.Cyan)]
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
