@@ -1,21 +1,34 @@
-# ChilloutVR Reworked Plates
+# ChilloutVR Custom Nameplates
 
-## Remade The ChilloutVR Plates
+Modified Nameplates, which look more modern and sleek than the default look.
 
-### How to use it:
-#### => U will need melonloader or BepinEx for it.
-#### => Melonloader: Drag the ml dll into the mods folder.
-#### => BepInEx: Drag the BepInEx dll into the plugins folder from the BepInEx directory.
+![image](https://user-images.githubusercontent.com/31988415/186771919-a76f6823-5538-4ecc-861d-2518dec373ee.png)
+![image](https://user-images.githubusercontent.com/31988415/186771933-9a217a97-c3af-40c5-b21b-619d243f2779.png)
+![image](https://user-images.githubusercontent.com/31988415/186771966-9bc5a20a-cf53-4ffb-9bb8-8f30aeca3db6.png)
+
+Nameplates will glow and the microphone icon will change when someone is talking.
+
+## TODO
+
+- enable/disable toggle
+  - stop modifying new nameplates
+  - reset all modified plates to default
+- live settings update (adjust colors of existing nameplates in running game)
+
+## Installation
+
+Requirements:
+- [MelonLoader](https://github.com/LavaGang/MelonLoader#how-to-use-the-installer)
+
+Then download the .dll [from here in the release section](https://github.com/TayouVR/CVR-CustomNameplates/releases) which you must place into your `Mods` folder of your game directory (check Steam installation directory).
+
+**Warning**: Mods are provided as is and there is no guarantee of working.
 
 ### Customazation:
-#### In the Nocturnal folder from CVR directory u will have a file called PlatesManagerConfig.Json
-#### Wen u will open u will see multiple stuff:
-#### The DefaultColor its the color every player except your friends will have. (The Color Its RGB)
-#### The FriendsColor its the color only your friends will have. (The Color Its RGB)
+The Colors can be changed via MelonPreferences, either via the file or via another mod like 
 
-#### Nameplates will glow wen someone is talking, and also the microphone icon will change wen they talk.
-## Preview
-![unknown (2)](https://user-images.githubusercontent.com/74219635/181791289-9382d5f0-c441-4432-b34e-23cc2ffe2db5.png)
-![unknown (3)](https://user-images.githubusercontent.com/74219635/181791338-8252ff10-25fa-4285-bd22-3ad094986b91.png)
+[![image](https://user-images.githubusercontent.com/31988415/186771618-d0a75a1d-0310-4f9b-9c7c-a146cf25aa1f.png)](https://github.com/sinai-dev/MelonPreferencesManager)
 
-###### I do not affiliate with ABI and the mod is not supported by ABI.
+Image Files are in `CVRGameDir/UserData/CustomNameplates/` and can just be swapped out.
+
+### I do not affiliate with ABI and the mod is not supported by ABI.
