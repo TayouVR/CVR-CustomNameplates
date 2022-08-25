@@ -455,7 +455,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="StylishNameplatesMod.cs" />
+    <Compile Include="CustomNameplatesMod.cs" />
     <Compile Include="NamePlateHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

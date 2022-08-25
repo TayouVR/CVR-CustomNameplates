@@ -16,9 +16,9 @@ using System.IO;
 
 namespace Tayou
 {
-    public class StylishNameplatesMod : MelonMod
+    public class CustomNameplatesMod : MelonMod
     {
-        private const string SettingsCategory = "StylishNameplates";
+        private const string SettingsCategory = "CustomNameplates";
         private const string SettingEnableMod = "Enabled";
         private const string SettingDefaultColor = "DefaultColor";
         private const string SettingFriendsColor = "FriendsColor";
@@ -48,7 +48,7 @@ namespace Tayou
         public override void OnApplicationStart()
         {
 
-            var category = MelonPreferences.CreateCategory(SettingsCategory, "Stylish Nameplates");
+            var category = MelonPreferences.CreateCategory(SettingsCategory, "Custom Nameplates");
             ourEnabled =           category.CreateEntry(SettingEnableMod,      true, "Enabled");
             ourDefaultColor =      category.CreateEntry(SettingDefaultColor,   new Color(0.3f, 0.3f, 0.3f, 1f), "Default Color");
             ourFriendsColor =      category.CreateEntry(SettingFriendsColor,   new Color(0.6f, 0.6f, 0f, 1f), "Friends Color");
@@ -125,7 +125,7 @@ namespace Tayou
         }
 
         private static void HPatch() =>
-            Instance.Patch(typeof(PlayerNameplate).GetMethod(nameof(PlayerNameplate.UpdateNamePlate)),null, typeof(StylishNameplatesMod).GetMethod(nameof(PostFix), System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).ToNewHarmonyMethod());
+            Instance.Patch(typeof(PlayerNameplate).GetMethod(nameof(PlayerNameplate.UpdateNamePlate)),null, typeof(CustomNameplatesMod).GetMethod(nameof(PostFix), System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).ToNewHarmonyMethod());
         
         private static void PostFix(PlayerNameplate __instance) =>       
             __instance.gameObject.AddComponent<NamePlateHandler>();

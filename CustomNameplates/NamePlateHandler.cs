@@ -42,26 +42,26 @@ namespace Tayou
             _canvas = this.transform.Find("Canvas").transform;
             _canvas.localScale = new Vector3(0.45f, 0.45f, 1);
             if (ABI_RC.Core.InteractionSystem.ViewManager.Instance.FriendList.FirstOrDefault(x => x.UserId == this.transform.parent.gameObject.name) != null)
-                UserColor = StylishNameplatesMod.ourFriendsColor.EditedValue;
+                UserColor = CustomNameplatesMod.ourFriendsColor.EditedValue;
 
             else
             {
                 switch (this.transform.parent.gameObject.GetComponent<ABI_RC.Core.Player.PlayerDescriptor>().userRank)
                 {
                     case "Legend":
-                        UserColor = StylishNameplatesMod.ourLegendColor.EditedValue;
+                        UserColor = CustomNameplatesMod.ourLegendColor.EditedValue;
                         break;
                     case "Community Guide":
-                        UserColor = StylishNameplatesMod.ourGuideColor.EditedValue;
+                        UserColor = CustomNameplatesMod.ourGuideColor.EditedValue;
                         break;
                     case "Moderator":
-                        UserColor = StylishNameplatesMod.ourModeratorColor.EditedValue;
+                        UserColor = CustomNameplatesMod.ourModeratorColor.EditedValue;
                         break;
                     case "Developer":
-                        UserColor = StylishNameplatesMod.ourDeveloperColor.EditedValue;
+                        UserColor = CustomNameplatesMod.ourDeveloperColor.EditedValue;
                         break;
                     default:
-                        UserColor = StylishNameplatesMod.ourDefaultColor.EditedValue;
+                        UserColor = CustomNameplatesMod.ourDefaultColor.EditedValue;
                         break;
                 }
             }
@@ -69,14 +69,14 @@ namespace Tayou
 
             _backgroundGameObject = this.transform.Find("Canvas/Content/Image").gameObject;
             Component.DestroyImmediate(_backgroundGameObject.GetComponent<Image>());
-            ConfigureImage(_backgroundGameObject.AddComponent<Image>(), UserColor, StylishNameplatesMod.backgroundImage, Image.Type.Sliced, 500);
+            ConfigureImage(_backgroundGameObject.AddComponent<Image>(), UserColor, CustomNameplatesMod.backgroundImage, Image.Type.Sliced, 500);
 
             _maskGameObject = this.transform.Find("Canvas/Content/Image/ObjectMaskSlave/UserImageMask").gameObject;
-            _maskGameObject.GetComponent<Image>().sprite = StylishNameplatesMod.profileBackgroundImage;
+            _maskGameObject.GetComponent<Image>().sprite = CustomNameplatesMod.profileBackgroundImage;
             _maskGameObject.transform.localScale = new Vector3(1.25f, 1.1f, 1);
 
             _backgroundGameObj = this.transform.Find("Canvas/Content/Image/ObjectMaskSlave/UserImageMask (1)").gameObject;
-            ConfigureImage(_backgroundGameObj.GetComponent<Image>(), UserColor, StylishNameplatesMod.profileBackgroundImage);
+            ConfigureImage(_backgroundGameObj.GetComponent<Image>(), UserColor, CustomNameplatesMod.profileBackgroundImage);
 
             _backgroundGameObj.transform.SetSiblingIndex(0);
             _backgroundGameObj.transform.localScale = new Vector3(1.45f, 1.25f, 1);
@@ -88,27 +88,27 @@ namespace Tayou
             _friendIcon.transform.localPosition = new Vector3(0.60f, 0.39f, 0);
 
             _friend = _friendIcon.GetComponent<Image>();
-            _friend.sprite = StylishNameplatesMod.friendImage;
+            _friend.sprite = CustomNameplatesMod.friendImage;
             _friend.enabled = false;
 
             MicOff = GameObject.Instantiate(_friendIcon, _friendIcon.transform.parent.transform);
             _micOffImage = MicOff.GetComponent<Image>();
-            _micOffImage.sprite = StylishNameplatesMod.micOffImage;
+            _micOffImage.sprite = CustomNameplatesMod.micOffImage;
             _micOffImage.enabled = true;
             MicOff.transform.localPosition = new Vector3(0.944f, 0.39f, 0);
 
             MicOn = GameObject.Instantiate(MicOff, _friendIcon.transform.parent.transform);
-            MicOn.GetComponent<UnityEngine.UI.Image>().sprite = StylishNameplatesMod.micOnImage;
+            MicOn.GetComponent<UnityEngine.UI.Image>().sprite = CustomNameplatesMod.micOnImage;
             MicOn.transform.localPosition = new Vector3(0.944f, 0.39f, 0);
             MicOn.gameObject.SetActive(false);
 
             GameObject staffPanel = this.transform.Find("Canvas/Content/Image/Image").gameObject;
             Component.DestroyImmediate(staffPanel.GetComponent<Image>());
-            ConfigureImage(staffPanel.AddComponent<Image>(), UserColor, StylishNameplatesMod.backgroundImage, Image.Type.Sliced);
+            ConfigureImage(staffPanel.AddComponent<Image>(), UserColor, CustomNameplatesMod.backgroundImage, Image.Type.Sliced);
 
             this.transform.Find("Canvas/Content/Image/Image/TMP:StaffRank").localPosition = new Vector3(-0.08f, 0.2902f, 0f);
 
-            if (UserColor == StylishNameplatesMod.ourFriendsColor.EditedValue) _friend.enabled = true;
+            if (UserColor == CustomNameplatesMod.ourFriendsColor.EditedValue) _friend.enabled = true;
             CancelInvoke(nameof(Setup));
             Dispose();
             /*if (Config.Instance.Js.DistanceScale) 
@@ -129,7 +129,7 @@ namespace Tayou
 
         private void GetDistance()
         {
-            _distance = 0.1f + Vector3.Distance(this.transform.parent.transform.position, StylishNameplatesMod.LocalPlayerTransform.position) / 9;
+            _distance = 0.1f + Vector3.Distance(this.transform.parent.transform.position, CustomNameplatesMod.LocalPlayerTransform.position) / 9;
             _distance2 = _distance > 0.9f ? 0.9f : _distance;
             _canvas.localScale = new Vector3(_distance2, _distance2, 1);
         }
