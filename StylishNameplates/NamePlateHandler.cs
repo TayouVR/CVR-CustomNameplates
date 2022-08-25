@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using ABI_RC.Core.Networking.IO.Social;
+using MelonLoader;
+
 namespace Tayou
 {
     internal class NamePlateHandler : MonoBehaviour, IDisposable
@@ -39,26 +41,26 @@ namespace Tayou
             _canvas = this.transform.Find("Canvas").transform;
             _canvas.localScale = new Vector3(0.45f, 0.45f, 1);
             if (ABI_RC.Core.InteractionSystem.ViewManager.Instance.FriendList.FirstOrDefault(x => x.UserId == this.transform.parent.gameObject.name) != null)
-                UserColor = Config.FriendsColor;
+                UserColor = StylishNameplatesMod.ourFriendsColor.EditedValue;
 
             else
             {
                 switch (this.transform.parent.gameObject.GetComponent<ABI_RC.Core.Player.PlayerDescriptor>().userRank)
                 {
                     case "Legend":
-                        UserColor = Config.Legend;
+                        UserColor = StylishNameplatesMod.ourLegendColor.EditedValue;
                         break;
                     case "Community Guide":
-                        UserColor = Config.Guide;
+                        UserColor = StylishNameplatesMod.ourGuideColor.EditedValue;
                         break;
                     case "Moderator":
-                        UserColor = Config.Mod;
+                        UserColor = StylishNameplatesMod.ourModeratorColor.EditedValue;
                         break;
                     case "Developer":
-                        UserColor = Config.Dev;
+                        UserColor = StylishNameplatesMod.ourDeveloperColor.EditedValue;
                         break;
                     default:
-                        UserColor = Config.DefaultColor;
+                        UserColor = StylishNameplatesMod.ourDefaultColor.EditedValue;
                         break;
                 }
             }
@@ -70,11 +72,11 @@ namespace Tayou
             BackgroundImageComp.type = UnityEngine.UI.Image.Type.Sliced;
             BackgroundImageComp.pixelsPerUnitMultiplier = 500;
             BackgroundImageComp.color = UserColor;
-            BackgroundImageComp.ChangeSpriteFromString(Config.Instance.Js.Background, 200, new Vector4(255, 0, 255, 0));
+            BackgroundImageComp.sprite = StylishNameplatesMod.backgroundImage;
             _maskGameObject = this.transform.Find("Canvas/Content/Image/ObjectMaskSlave/UserImageMask").gameObject;
             Component.DestroyImmediate(_maskGameObject.GetComponent<UnityEngine.UI.Image>());
             _maskImageComp = _maskGameObject.AddComponent<UnityEngine.UI.Image>();
-            _maskImageComp.ChangeSpriteFromString(Config.Instance.Js.Icon);
+            _maskImageComp.sprite = StylishNameplatesMod.profileBackgroundImage;
             _maskGameObject.transform.localScale = new Vector3(1.25f, 1.1f, 1);
             Component.DestroyImmediate(_maskGameObject.GetComponent<UnityEngine.UI.Mask>());
             _maskGameObject.AddComponent<UnityEngine.UI.Mask>();
@@ -82,7 +84,7 @@ namespace Tayou
             Component.DestroyImmediate(_backgroundGameObj.GetComponent<UnityEngine.UI.Image>());
             BackgroundMask = _backgroundGameObj.AddComponent<UnityEngine.UI.Image>();
             BackgroundMask.color = UserColor;
-            BackgroundMask.ChangeSpriteFromString(Config.Instance.Js.Icon);
+            BackgroundMask.sprite = StylishNameplatesMod.profileBackgroundImage;
             BackgroundMask.transform.SetSiblingIndex(0);
             BackgroundMask.transform.localScale = new Vector3(1.45f, 1.25f, 1);
             _maskGameObject.transform.Find("UserImage").transform.localScale = new Vector3(1.05f, 1.05f, 1);
@@ -90,23 +92,23 @@ namespace Tayou
             _freindIcon.transform.localScale = new Vector3(0.9f, 0.6f, 1);
             _freindIcon.transform.localPosition = new Vector3(0.60f, 0.39f, 0);
             _friend = _freindIcon.GetComponent<UnityEngine.UI.Image>();
-            _friend.ChangeSpriteFromString(Config.Instance.Js.Friend).color = UserColorMaxAlpha;
+            _friend.sprite = StylishNameplatesMod.friendImage;
             _friend.enabled = false;
             MicOff = GameObject.Instantiate(_freindIcon, _freindIcon.transform.parent.transform);
             _micOffImage = MicOff.GetComponent<UnityEngine.UI.Image>();
-            _micOffImage.ChangeSpriteFromString(Config.Instance.Js.MicIconOff).color = UserColor;
+            _micOffImage.sprite = StylishNameplatesMod.friendImage;
             _micOffImage.enabled = true;
             MicOff.transform.localPosition = new Vector3(0.944f, 0.39f, 0);
             MicOn = GameObject.Instantiate(MicOff, _freindIcon.transform.parent.transform);
-            MicOn.GetComponent<UnityEngine.UI.Image>().ChangeSpriteFromString(Config.Instance.Js.MicIconOn).color = UserColor;
+            MicOn.GetComponent<UnityEngine.UI.Image>().sprite = StylishNameplatesMod.micOnImage;
             MicOn.transform.localPosition = new Vector3(0.944f, 0.39f, 0);
             MicOn.gameObject.SetActive(false);
             this.transform.Find("Canvas/Content/Image/Image").gameObject.GetComponent<UnityEngine.UI.Image>().color = UserColorMaxAlpha;
-            if (UserColor == new Color(Config.FriendsColor.r, Config.FriendsColor.g, Config.FriendsColor.b, 0.4f)) _friend.enabled = true;
+            if (UserColor == StylishNameplatesMod.ourFriendsColor.EditedValue) _friend.enabled = true;
             CancelInvoke(nameof(Setup));
             Dispose();
-            if (Config.Instance.Js.DistanceScale) 
-                InvokeRepeating(nameof(GetDistance), -1, 0.1f);
+            /*if (Config.Instance.Js.DistanceScale) 
+                InvokeRepeating(nameof(GetDistance), -1, 0.1f);*/
         }
 
         private float _distance { get; set; }
@@ -114,7 +116,7 @@ namespace Tayou
 
         private void GetDistance()
         {
-            _distance = 0.1f + Vector3.Distance(this.transform.parent.transform.position, Main.LocalPlayerTransform.position) / 9;
+            _distance = 0.1f + Vector3.Distance(this.transform.parent.transform.position, StylishNameplatesMod.LocalPlayerTransform.position) / 9;
             _distance2 = _distance > 0.9f ? 0.9f : _distance;
             _canvas.localScale = new Vector3(_distance2, _distance2, 1);
         }
