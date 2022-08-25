@@ -46,65 +46,9 @@
     <Reference Include="AssetsTools.NET">
       <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\MelonLoader\AssetsTools.NET.dll</HintPath>
     </Reference>
-    <Reference Include="Aura2_Core">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Aura2_Core.dll</HintPath>
-    </Reference>
-    <Reference Include="AVProVideo.Demos">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\AVProVideo.Demos.dll</HintPath>
-    </Reference>
-    <Reference Include="AVProVideo.Extensions.Timeline">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\AVProVideo.Extensions.Timeline.dll</HintPath>
-    </Reference>
-    <Reference Include="AVProVideo.Extensions.UnityUI">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\AVProVideo.Extensions.UnityUI.dll</HintPath>
-    </Reference>
-    <Reference Include="AVProVideo.Extensions.VisualEffectGraph">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\AVProVideo.Extensions.VisualEffectGraph.dll</HintPath>
-    </Reference>
-    <Reference Include="AVProVideo.Runtime">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\AVProVideo.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="AwesomeTechnologies.TouchReactSystemPro.Runtime">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\AwesomeTechnologies.TouchReactSystemPro.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="AwesomeTechnologies.VegetationStudioPro.Runtime">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\AwesomeTechnologies.VegetationStudioPro.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Bhaptics.Tact">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Bhaptics.Tact.dll</HintPath>
-    </Reference>
-    <Reference Include="Boxophobic.TheVehetationEngine.Runtime">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Boxophobic.TheVehetationEngine.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Boxophobic.Utils.Scripts">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Boxophobic.Utils.Scripts.dll</HintPath>
-    </Reference>
-    <Reference Include="Cinemachine">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Cinemachine.dll</HintPath>
-    </Reference>
-    <Reference Include="cohtml.Net">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\cohtml.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="Cohtml.RenderingBackend">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Cohtml.RenderingBackend.dll</HintPath>
-    </Reference>
-    <Reference Include="Cohtml.Runtime">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Cohtml.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Crc32.NET">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Crc32.NET.dll</HintPath>
-    </Reference>
-    <Reference Include="DarkRift">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\DarkRift.dll</HintPath>
-    </Reference>
-    <Reference Include="DarkRift.Client">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\DarkRift.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="DarkRift.Server">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\DarkRift.Server.dll</HintPath>
-    </Reference>
-    <Reference Include="DissonanceVoip">
-      <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\DissonanceVoip.dll</HintPath>
+    <Reference Include="DissonanceVoip, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>W:\SteamLibrary\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\DissonanceVoip.dll</HintPath>
     </Reference>
     <Reference Include="MelonLoader, Version=0.5.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
