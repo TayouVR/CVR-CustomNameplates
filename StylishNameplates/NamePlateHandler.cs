@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using ABI_RC.Core.Networking.IO.Social;
 using MelonLoader;
+using UnityEngine.UI;
 
 namespace Tayou
 {
@@ -17,7 +18,7 @@ namespace Tayou
         public UnityEngine.UI.Image BackgroundImageComp { get; set; }
         public UnityEngine.UI.Image BackgroundMask { get; set; }
         private GameObject _backgroundGameObj{ get; set; }
-        private GameObject _freindIcon { get; set; }
+        private GameObject _friendIcon { get; set; }
         public GameObject MicOn { get; set; }
         public GameObject MicOff { get; set; }
         public Color UserColor { get; set; }
@@ -30,7 +31,7 @@ namespace Tayou
         private Transform _canvas { get; set; }
 
         void Start() => InvokeRepeating(nameof(Setup), -1, 0.3f);
-         private void Setup()
+        private void Setup()
         {
             try
             {
@@ -64,51 +65,63 @@ namespace Tayou
                         break;
                 }
             }
-            UserColor = new Color(UserColor.r, UserColor.g, UserColor.b, 0.4f);
             UserColorMaxAlpha = new Color(UserColor.r, UserColor.g, UserColor.b, 1);
+
             _backgroundGameObject = this.transform.Find("Canvas/Content/Image").gameObject;
-            Component.DestroyImmediate(_backgroundGameObject.GetComponent<UnityEngine.UI.Image>());
-            BackgroundImageComp = _backgroundGameObject.AddComponent<UnityEngine.UI.Image>();
-            BackgroundImageComp.type = UnityEngine.UI.Image.Type.Sliced;
-            BackgroundImageComp.pixelsPerUnitMultiplier = 500;
-            BackgroundImageComp.color = UserColor;
-            BackgroundImageComp.sprite = StylishNameplatesMod.backgroundImage;
+            Component.DestroyImmediate(_backgroundGameObject.GetComponent<Image>());
+            ConfigureImage(_backgroundGameObject.AddComponent<Image>(), UserColor, StylishNameplatesMod.backgroundImage, Image.Type.Sliced, 500);
+
             _maskGameObject = this.transform.Find("Canvas/Content/Image/ObjectMaskSlave/UserImageMask").gameObject;
-            Component.DestroyImmediate(_maskGameObject.GetComponent<UnityEngine.UI.Image>());
-            _maskImageComp = _maskGameObject.AddComponent<UnityEngine.UI.Image>();
-            _maskImageComp.sprite = StylishNameplatesMod.profileBackgroundImage;
+            _maskGameObject.GetComponent<Image>().sprite = StylishNameplatesMod.profileBackgroundImage;
             _maskGameObject.transform.localScale = new Vector3(1.25f, 1.1f, 1);
-            Component.DestroyImmediate(_maskGameObject.GetComponent<UnityEngine.UI.Mask>());
-            _maskGameObject.AddComponent<UnityEngine.UI.Mask>();
+
             _backgroundGameObj = this.transform.Find("Canvas/Content/Image/ObjectMaskSlave/UserImageMask (1)").gameObject;
-            Component.DestroyImmediate(_backgroundGameObj.GetComponent<UnityEngine.UI.Image>());
-            BackgroundMask = _backgroundGameObj.AddComponent<UnityEngine.UI.Image>();
-            BackgroundMask.color = UserColor;
-            BackgroundMask.sprite = StylishNameplatesMod.profileBackgroundImage;
-            BackgroundMask.transform.SetSiblingIndex(0);
-            BackgroundMask.transform.localScale = new Vector3(1.45f, 1.25f, 1);
-            _maskGameObject.transform.Find("UserImage").transform.localScale = new Vector3(1.05f, 1.05f, 1);
-            _freindIcon = _backgroundGameObject.transform.Find("FriendsIndicator").gameObject;
-            _freindIcon.transform.localScale = new Vector3(0.9f, 0.6f, 1);
-            _freindIcon.transform.localPosition = new Vector3(0.60f, 0.39f, 0);
-            _friend = _freindIcon.GetComponent<UnityEngine.UI.Image>();
+            ConfigureImage(_backgroundGameObj.GetComponent<Image>(), UserColor, StylishNameplatesMod.profileBackgroundImage);
+
+            _backgroundGameObj.transform.SetSiblingIndex(0);
+            _backgroundGameObj.transform.localScale = new Vector3(1.45f, 1.25f, 1);
+
+            /*_maskGameObject.transform.Find("UserImage").transform.localScale = new Vector3(1.05f, 1.05f, 1);*/
+
+            _friendIcon = _backgroundGameObject.transform.Find("FriendsIndicator").gameObject;
+            _friendIcon.transform.localScale = new Vector3(0.9f, 0.6f, 1);
+            _friendIcon.transform.localPosition = new Vector3(0.60f, 0.39f, 0);
+
+            _friend = _friendIcon.GetComponent<Image>();
             _friend.sprite = StylishNameplatesMod.friendImage;
             _friend.enabled = false;
-            MicOff = GameObject.Instantiate(_freindIcon, _freindIcon.transform.parent.transform);
-            _micOffImage = MicOff.GetComponent<UnityEngine.UI.Image>();
-            _micOffImage.sprite = StylishNameplatesMod.friendImage;
+
+            MicOff = GameObject.Instantiate(_friendIcon, _friendIcon.transform.parent.transform);
+            _micOffImage = MicOff.GetComponent<Image>();
+            _micOffImage.sprite = StylishNameplatesMod.micOffImage;
             _micOffImage.enabled = true;
             MicOff.transform.localPosition = new Vector3(0.944f, 0.39f, 0);
-            MicOn = GameObject.Instantiate(MicOff, _freindIcon.transform.parent.transform);
+
+            MicOn = GameObject.Instantiate(MicOff, _friendIcon.transform.parent.transform);
             MicOn.GetComponent<UnityEngine.UI.Image>().sprite = StylishNameplatesMod.micOnImage;
             MicOn.transform.localPosition = new Vector3(0.944f, 0.39f, 0);
             MicOn.gameObject.SetActive(false);
-            this.transform.Find("Canvas/Content/Image/Image").gameObject.GetComponent<UnityEngine.UI.Image>().color = UserColorMaxAlpha;
+
+            GameObject staffPanel = this.transform.Find("Canvas/Content/Image/Image").gameObject;
+            Component.DestroyImmediate(staffPanel.GetComponent<Image>());
+            ConfigureImage(staffPanel.AddComponent<Image>(), UserColor, StylishNameplatesMod.backgroundImage, Image.Type.Sliced);
+
+            this.transform.Find("Canvas/Content/Image/Image/TMP:StaffRank").localPosition = new Vector3(-0.08f, 0.2902f, 0f);
+
             if (UserColor == StylishNameplatesMod.ourFriendsColor.EditedValue) _friend.enabled = true;
             CancelInvoke(nameof(Setup));
             Dispose();
             /*if (Config.Instance.Js.DistanceScale) 
                 InvokeRepeating(nameof(GetDistance), -1, 0.1f);*/
+        }
+
+        private void ConfigureImage(Image image, Color color, Sprite sprite, Image.Type type = Image.Type.Simple, int pixelsPerUnitMultiplier = 1)
+        {
+            BackgroundImageComp = image;
+            BackgroundImageComp.type = type;
+            BackgroundImageComp.pixelsPerUnitMultiplier = pixelsPerUnitMultiplier;
+            BackgroundImageComp.color = color;
+            BackgroundImageComp.sprite = sprite;
         }
 
         private float _distance { get; set; }
@@ -131,7 +144,7 @@ namespace Tayou
             _maskImageComp = null;
             _backgroundGameObject = null;
             _backgroundGameObj = null;
-            _freindIcon = null;
+            _friendIcon = null;
         }
     }
 }

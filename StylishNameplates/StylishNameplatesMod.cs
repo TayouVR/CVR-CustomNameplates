@@ -35,7 +35,7 @@ namespace Tayou
         public static MelonPreferences_Entry<Color> ourGuideColor;
         public static MelonPreferences_Entry<Color> ourModeratorColor;
         public static MelonPreferences_Entry<Color> ourDeveloperColor;
-        public static MelonPreferences_Entry<bool> imagesCached;
+        public static MelonPreferences_Entry<bool> imagesUnpacked;
         public static Sprite backgroundImage;
         public static Sprite profileBackgroundImage;
         public static Sprite micOnImage;
@@ -50,15 +50,15 @@ namespace Tayou
 
             var category = MelonPreferences.CreateCategory(SettingsCategory, "Stylish Nameplates");
             ourEnabled =           category.CreateEntry(SettingEnableMod,      true, "Enabled");
-            ourDefaultColor =      category.CreateEntry(SettingDefaultColor,   new Color(0.3f, 0.3f, 0.3f, 0.8f), "Default Color");
-            ourFriendsColor =      category.CreateEntry(SettingFriendsColor,   new Color(1f, 1f, 0f, 0.8f), "Friends Color");
-            ourLegendColor =       category.CreateEntry(SettingLegendColor,    new Color(0.5f, 0.5f, 0.125f, 0.8f), "Legend Color");
-            ourGuideColor =        category.CreateEntry(SettingGuideColor,     new Color(1f, 0.3f, 0f, 0.8f), "Guide Color");
-            ourModeratorColor =    category.CreateEntry(SettingModeratorColor, new Color(0.5f, 0f, 0f, 0.8f), "Moderator Color");
-            ourDeveloperColor =    category.CreateEntry(SettingDeveloperColor, new Color(1f, 0f, 0f, 0.8f), "Developer Color");
-            imagesCached =         category.CreateEntry(SettingImagesCached,   false, "Images Cached");
+            ourDefaultColor =      category.CreateEntry(SettingDefaultColor,   new Color(0.3f, 0.3f, 0.3f, 1f), "Default Color");
+            ourFriendsColor =      category.CreateEntry(SettingFriendsColor,   new Color(0.6f, 0.6f, 0f, 1f), "Friends Color");
+            ourLegendColor =       category.CreateEntry(SettingLegendColor,    new Color(0.5f, 0.5f, 0.125f, 1f), "Legend Color");
+            ourGuideColor =        category.CreateEntry(SettingGuideColor,     new Color(1f, 0.3f, 0f, 1f), "Guide Color");
+            ourModeratorColor =    category.CreateEntry(SettingModeratorColor, new Color(0.5f, 0f, 0f, 1f), "Moderator Color");
+            ourDeveloperColor =    category.CreateEntry(SettingDeveloperColor, new Color(1f, 0f, 0f, 1f), "Developer Color");
+            imagesUnpacked =         category.CreateEntry(SettingImagesCached,   false, "Images Cached");
 
-            if (!imagesCached.EditedValue)
+            if (!imagesUnpacked.EditedValue)
                 CacheImages();
 
             LoadImages();
@@ -68,31 +68,29 @@ namespace Tayou
 
         private void LoadImages()
         {
-            Texture2D tex = new Texture2D(256, 256);
-            ImageConversion.LoadImage(tex, File.ReadAllBytes("UserData/CustomNameplates/" + "background.png"));
-            backgroundImage = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 200, 1000u, SpriteMeshType.FullRect, new Vector4(255, 0, 255, 0), false);
-            ImageConversion.LoadImage(tex, File.ReadAllBytes("UserData/CustomNameplates/" + "profileIcon.png"));
-            profileBackgroundImage = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 0, 1000u, SpriteMeshType.FullRect, new Vector4(0, 0, 0, 0), false);
-            ImageConversion.LoadImage(tex, File.ReadAllBytes("UserData/CustomNameplates/" + "micOn.png"));
-            micOnImage = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 0, 1000u, SpriteMeshType.FullRect, new Vector4(0, 0, 0, 0), false);
-            ImageConversion.LoadImage(tex, File.ReadAllBytes("UserData/CustomNameplates/" + "micOff.png"));
-            micOffImage = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 0, 1000u, SpriteMeshType.FullRect, new Vector4(0, 0, 0, 0), false);
-            ImageConversion.LoadImage(tex, File.ReadAllBytes("UserData/CustomNameplates/" + "friend.png"));
-            friendImage = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 0, 1000u, SpriteMeshType.FullRect, new Vector4(0, 0, 0, 0), false);
+            backgroundImage = LoadImage("UserData/CustomNameplates/" + "background.png", new Vector4(255, 0, 255, 0));
+            profileBackgroundImage = LoadImage("UserData/CustomNameplates/" + "profileIcon.png");
+            micOnImage = LoadImage("UserData/CustomNameplates/" + "micOn.png");
+            micOffImage = LoadImage("UserData/CustomNameplates/" + "micOff.png");
+            friendImage = LoadImage("UserData/CustomNameplates/" + "friend.png");
+            Sprite LoadImage(string path, Vector4 border = new Vector4())
+            {
+                Texture2D tex = new Texture2D(256, 256);
+                ImageConversion.LoadImage(tex, File.ReadAllBytes(path));
+                return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 200, 1000u, SpriteMeshType.FullRect, border, false);
+            }
         }
 
         private void CacheImages()
         {
             if (!Directory.Exists("UserData/CustomNameplates"))
                 Directory.CreateDirectory("UserData/CustomNameplates");
-            using (WebClient wc = new WebClient()) {
-                wc.DownloadFile("https://raw.githubusercontent.com/TayouVR/CVR-Stylish-Nameplates/master/Icons/nameplate.png",  "UserData/CustomNameplates/" + "background.png");
-                wc.DownloadFile("https://raw.githubusercontent.com/TayouVR/CVR-Stylish-Nameplates/master/Icons/nameplate.png",  "UserData/CustomNameplates/" + "profileIcon.png");
-                wc.DownloadFile("https://raw.githubusercontent.com/TayouVR/CVR-Stylish-Nameplates/master/Icons/micon.png",      "UserData/CustomNameplates/" + "micOn.png");
-                wc.DownloadFile("https://raw.githubusercontent.com/TayouVR/CVR-Stylish-Nameplates/master/Icons/micoff.png",     "UserData/CustomNameplates/" + "micOff.png");
-                wc.DownloadFile("https://raw.githubusercontent.com/TayouVR/CVR-Stylish-Nameplates/master/Icons/friendIcon.png", "UserData/CustomNameplates/" + "friend.png");
-            }
-            imagesCached.EditedValue = true;
+            Properties.Resources.background.Save("UserData/CustomNameplates/" + "background.png");
+            Properties.Resources.background.Save("UserData/CustomNameplates/" + "profileIcon.png");
+            Properties.Resources.micOn.Save("UserData/CustomNameplates/" + "micOn.png");
+            Properties.Resources.micOff.Save("UserData/CustomNameplates/" + "micOff.png");
+            Properties.Resources.friend.Save("UserData/CustomNameplates/" + "friend.png");
+            imagesUnpacked.EditedValue = true;
         }
 
         private IEnumerator WaitForUi()
