@@ -9,7 +9,7 @@ using System.Net;
 using UnityEngine;
 using System.Reflection;
 
-namespace Nocturnal
+namespace Tayou
 {
 
     public class Json
@@ -60,11 +60,11 @@ namespace Nocturnal
                         Guide = new int[] { 0, 199, 7 },
                         Mod = new int[] { 158, 0, 29 },
                         Dev = new int[] { 77, 0, 14 },
-                        Background = Convert.ToBase64String(wc.DownloadData("https://raw.githubusercontent.com/Edward7s/Nocturnal-CVR-Plates-ReWorker/master/Icons/namepalte%20(1).png")),
-                        Icon = Convert.ToBase64String(wc.DownloadData("https://raw.githubusercontent.com/Edward7s/Nocturnal-CVR-Plates-ReWorker/master/Icons/iconbackground.png")),
-                        MicIconOn = Convert.ToBase64String(wc.DownloadData("https://raw.githubusercontent.com/Edward7s/Nocturnal-CVR-Plates-ReWorker/master/Icons/Mic%20On.png")),
-                        MicIconOff = Convert.ToBase64String(wc.DownloadData("https://raw.githubusercontent.com/Edward7s/Nocturnal-CVR-Plates-ReWorker/master/Icons/micoff.png")),
-                        Friend = Convert.ToBase64String(wc.DownloadData("https://raw.githubusercontent.com/Edward7s/Nocturnal-CVR-Plates-ReWorker/master/Icons/friendIcon.png")),
+                        Background = Convert.ToBase64String(wc.DownloadData("https://raw.githubusercontent.com/TayouVR/CVR-Stylish-Nameplates/master/Icons/nameplate.png")),
+                        Icon = Convert.ToBase64String(wc.DownloadData("https://raw.githubusercontent.com/TayouVR/CVR-Stylish-Nameplates/master/Icons/iconbackground.png")),
+                        MicIconOn = Convert.ToBase64String(wc.DownloadData("https://raw.githubusercontent.com/TayouVR/CVR-Stylish-Nameplates/master/Icons/Mic%20On.png")),
+                        MicIconOff = Convert.ToBase64String(wc.DownloadData("https://raw.githubusercontent.com/TayouVR/CVR-Stylish-Nameplates/master/Icons/micoff.png")),
+                        Friend = Convert.ToBase64String(wc.DownloadData("https://raw.githubusercontent.com/TayouVR/CVR-Stylish-Nameplates/master/Icons/friendIcon.png")),
                         DistanceScale = true,
                     }));
                     wc.Dispose();

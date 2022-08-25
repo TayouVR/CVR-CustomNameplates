@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using ABI_RC.Core.Networking.IO.Social;
-namespace Nocturnal
+namespace Tayou
 {
     internal class NamePlateHandler : MonoBehaviour, IDisposable
     {

@@ -4,18 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MelonLoader;
-using Harmony;
 using ABI_RC.Core.Player;
 using System.Reflection;
 using ABI_RC.Core;
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-namespace Nocturnal
+using HarmonyLib;
+namespace Tayou
 {
     public class Main : MelonMod
     {
-        private static HarmonyInstance Instance  = new HarmonyInstance(Guid.NewGuid().ToString());
+        private static HarmonyLib.Harmony Instance  = new HarmonyLib.Harmony(Guid.NewGuid().ToString());
         public static Transform LocalPlayerTransform { get; set; }
         public override void OnApplicationStart()
         {

@@ -7,8 +7,8 @@
     <ProjectGuid>{DA25C190-0798-445B-8114-C2D1A7A89B26}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Nocturnal</RootNamespace>
-    <AssemblyName>Nocturnal CVR ReWorked Plates ml</AssemblyName>
+    <RootNamespace>Tayou</RootNamespace>
+    <AssemblyName>StylishNameplates</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -110,6 +110,30 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\steam\steamapps\common\ChilloutVR\MelonLoader\MelonLoader\MelonLoader.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Cecil, Version=0.10.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>W:\SteamLibrary\steamapps\common\ChilloutVR\MelonLoader\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb, Version=0.10.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>W:\SteamLibrary\steamapps\common\ChilloutVR\MelonLoader\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb, Version=0.10.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>W:\SteamLibrary\steamapps\common\ChilloutVR\MelonLoader\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks, Version=0.10.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>W:\SteamLibrary\steamapps\common\ChilloutVR\MelonLoader\Mono.Cecil.Rocks.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.RuntimeDetour, Version=22.1.29.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>W:\SteamLibrary\steamapps\common\ChilloutVR\MelonLoader\MonoMod.RuntimeDetour.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.Utils, Version=22.1.29.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>W:\SteamLibrary\steamapps\common\ChilloutVR\MelonLoader\MonoMod.Utils.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Newtonsoft.Json.dll</HintPath>
@@ -122,6 +146,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Tomlet, Version=3.1.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>W:\SteamLibrary\steamapps\common\ChilloutVR\MelonLoader\Tomlet.dll</HintPath>
+    </Reference>
     <Reference Include="UniTask.TextMeshPro">
       <HintPath>..\..\..\steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UniTask.TextMeshPro.dll</HintPath>
     </Reference>
@@ -429,7 +457,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(TargetPath)" "A:\steam\steamapps\common\ChilloutVR\MelonLoader\Mods" /Y /I
+    <PostBuildEvent>xcopy "$(TargetPath)" "W:\SteamLibrary\steamapps\common\ChilloutVR\Mods" /Y /I
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
