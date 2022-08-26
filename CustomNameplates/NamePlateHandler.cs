@@ -7,11 +7,14 @@ using UnityEngine;
 using ABI_RC.Core.Networking.IO.Social;
 using MelonLoader;
 using UnityEngine.UI;
+using ABI_RC.Core.Player;
 
 namespace Tayou
 {
     internal class NamePlateHandler : MonoBehaviour, IDisposable
     {
+        public PlayerNameplate playerNameplate;
+
         private GameObject _maskGameObject { get; set; }
         private UnityEngine.UI.Image _maskImageComp { get; set; }
         private GameObject _backgroundGameObject { get; set; }
@@ -21,14 +24,17 @@ namespace Tayou
         private GameObject _friendIcon { get; set; }
         public GameObject MicOn { get; set; }
         public GameObject MicOff { get; set; }
-        public Color UserColor { get; set; }
-        private Color UserColorMaxAlpha { get; set; }
+        public Color32 UserColor { get; set; }
+        private Color32 UserColorMaxAlpha { get; set; }
 
         private UnityEngine.UI.Image _micOffImage{ get; set; }
         private UnityEngine.UI.Image _micOnImage { get; set; }
         private UnityEngine.UI.Image _friend { get; set; }
         
         private Transform _canvas { get; set; }
+
+        private bool isFriend;
+        private string userRank;
 
         void Start() => InvokeRepeating(nameof(Setup), -1, 0.3f);
         private void Setup()
@@ -39,43 +45,33 @@ namespace Tayou
             }
             catch { return; }
 
+            isFriend = ABI_RC.Core.InteractionSystem.ViewManager.Instance.FriendList.FirstOrDefault(x => x.UserId == this.transform.parent.gameObject.name) != null;
+            userRank = this.transform.parent.gameObject.GetComponent<ABI_RC.Core.Player.PlayerDescriptor>().userRank;
+
+            UserColor = GetNameplateColor();
+
             _canvas = this.transform.Find("Canvas").transform;
             _canvas.localScale = new Vector3(0.45f, 0.45f, 1);
-            if (ABI_RC.Core.InteractionSystem.ViewManager.Instance.FriendList.FirstOrDefault(x => x.UserId == this.transform.parent.gameObject.name) != null)
-                UserColor = CustomNameplatesMod.ourFriendsColor.EditedValue;
 
-            else
-            {
-                switch (this.transform.parent.gameObject.GetComponent<ABI_RC.Core.Player.PlayerDescriptor>().userRank)
-                {
-                    case "Legend":
-                        UserColor = CustomNameplatesMod.ourLegendColor.EditedValue;
-                        break;
-                    case "Community Guide":
-                        UserColor = CustomNameplatesMod.ourGuideColor.EditedValue;
-                        break;
-                    case "Moderator":
-                        UserColor = CustomNameplatesMod.ourModeratorColor.EditedValue;
-                        break;
-                    case "Developer":
-                        UserColor = CustomNameplatesMod.ourDeveloperColor.EditedValue;
-                        break;
-                    default:
-                        UserColor = CustomNameplatesMod.ourDefaultColor.EditedValue;
-                        break;
-                }
+            if (CustomNameplatesMod.noBackground.EditedValue) {
+                _canvas.Find("Content/TMP:Username").gameObject.GetComponent<TMPro.TextMeshProUGUI>().color = (
+                    userRank == "Developer" || 
+                    userRank == "Moderator" || 
+                    userRank == "Community Guide" || 
+                    userRank == "Legend" || 
+                    isFriend) ? UserColor : (Color32)Color.white;
+                UserColor = new Color32(0, 0, 0, 0);
             }
-            UserColorMaxAlpha = new Color(UserColor.r, UserColor.g, UserColor.b, 1);
 
-            _backgroundGameObject = this.transform.Find("Canvas/Content/Image").gameObject;
+            _backgroundGameObject = _canvas.Find("Content/Image").gameObject;
             Component.DestroyImmediate(_backgroundGameObject.GetComponent<Image>());
             ConfigureImage(_backgroundGameObject.AddComponent<Image>(), UserColor, CustomNameplatesMod.backgroundImage, Image.Type.Sliced, 500);
 
-            _maskGameObject = this.transform.Find("Canvas/Content/Image/ObjectMaskSlave/UserImageMask").gameObject;
+            _maskGameObject = _canvas.Find("Content/Image/ObjectMaskSlave/UserImageMask").gameObject;
             _maskGameObject.GetComponent<Image>().sprite = CustomNameplatesMod.profileBackgroundImage;
             _maskGameObject.transform.localScale = new Vector3(1.25f, 1.1f, 1);
 
-            _backgroundGameObj = this.transform.Find("Canvas/Content/Image/ObjectMaskSlave/UserImageMask (1)").gameObject;
+            _backgroundGameObj = _canvas.Find("Content/Image/ObjectMaskSlave/UserImageMask (1)").gameObject;
             ConfigureImage(_backgroundGameObj.GetComponent<Image>(), UserColor, CustomNameplatesMod.profileBackgroundImage);
 
             _backgroundGameObj.transform.SetSiblingIndex(0);
@@ -102,17 +98,48 @@ namespace Tayou
             MicOn.transform.localPosition = new Vector3(0.944f, 0.39f, 0);
             MicOn.gameObject.SetActive(false);
 
-            GameObject staffPanel = this.transform.Find("Canvas/Content/Image/Image").gameObject;
+            GameObject staffPanel = _canvas.Find("Content/Image/Image").gameObject;
             Component.DestroyImmediate(staffPanel.GetComponent<Image>());
             ConfigureImage(staffPanel.AddComponent<Image>(), UserColor, CustomNameplatesMod.backgroundImage, Image.Type.Sliced);
 
-            this.transform.Find("Canvas/Content/Image/Image/TMP:StaffRank").localPosition = new Vector3(-0.08f, 0.2902f, 0f);
+            _canvas.Find("Content/Image/Image/TMP:StaffRank").localPosition = new Vector3(-0.08f, 0.2902f, 0f);
 
-            if (UserColor == CustomNameplatesMod.ourFriendsColor.EditedValue) _friend.enabled = true;
+            if (isFriend) _friend.enabled = true;
             CancelInvoke(nameof(Setup));
             Dispose();
             /*if (Config.Instance.Js.DistanceScale) 
                 InvokeRepeating(nameof(GetDistance), -1, 0.1f);*/
+        }
+
+        private Color32 GetNameplateColor()
+        {
+            Color32 UserColor = (Color32)typeof(PlayerNameplate).GetField("nameplateColor", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(playerNameplate);
+            if (isFriend)
+                UserColor = CustomNameplatesMod.ourFriendsColor.EditedValue;
+            else
+            {
+                switch (this.transform.parent.gameObject.GetComponent<ABI_RC.Core.Player.PlayerDescriptor>().userRank)
+                {
+                    case "Legend":
+                        UserColor = CustomNameplatesMod.ourLegendColor.EditedValue;
+                        break;
+                    case "Community Guide":
+                        UserColor = CustomNameplatesMod.ourGuideColor.EditedValue;
+                        break;
+                    case "Moderator":
+                        //UserColor = new Color(UserColor.r, UserColor.g, UserColor.b, CustomNameplatesMod.ourDefaultColor.EditedValue.a); //CustomNameplatesMod.ourModeratorColor.EditedValue;
+                        break;
+                    case "Developer":
+                        //UserColor = new Color(UserColor.r, UserColor.g, UserColor.b, CustomNameplatesMod.ourDefaultColor.EditedValue.a); //CustomNameplatesMod.ourDeveloperColor.EditedValue;
+                        break;
+                    default:
+                        UserColor = CustomNameplatesMod.ourDefaultColor.EditedValue;
+                        break;
+                }
+            }
+            typeof(PlayerNameplate).GetField("nameplateColor", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(playerNameplate, UserColor);
+
+            return UserColor;
         }
 
         private void ConfigureImage(Image image, Color color, Sprite sprite, Image.Type type = Image.Type.Simple, int pixelsPerUnitMultiplier = 1)
