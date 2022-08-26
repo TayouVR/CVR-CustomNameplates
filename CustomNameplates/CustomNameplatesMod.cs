@@ -26,7 +26,7 @@ namespace Tayou
         private const string SettingGuideColor = "GuideColor";
         private const string SettingModeratorColor = "ModeratorColor";
         private const string SettingDeveloperColor = "DeveloperColor";
-        private const string SettingImagesCached = "ImagesCached";
+        private const string SettingImagesUnpacked = "ImagesUnpacked";
 
         public static MelonPreferences_Entry<bool> ourEnabled;
         public static MelonPreferences_Entry<Color> ourDefaultColor;
@@ -56,7 +56,7 @@ namespace Tayou
             ourGuideColor =        category.CreateEntry(SettingGuideColor,     new Color(1f, 0.3f, 0f, 1f), "Guide Color");
             ourModeratorColor =    category.CreateEntry(SettingModeratorColor, new Color(0.5f, 0f, 0f, 1f), "Moderator Color");
             ourDeveloperColor =    category.CreateEntry(SettingDeveloperColor, new Color(1f, 0f, 0f, 1f), "Developer Color");
-            imagesUnpacked =         category.CreateEntry(SettingImagesCached,   false, "Images Cached");
+            imagesUnpacked =       (MelonPreferences_Entry<bool>)category.CreateEntry(SettingImagesUnpacked, false, "Images Cached", true);
 
             if (!imagesUnpacked.EditedValue)
                 CacheImages();
