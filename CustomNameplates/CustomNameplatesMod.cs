@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MelonLoader;
 using ABI_RC.Core.Player;
-using System.Reflection;
 using ABI_RC.Core;
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using HarmonyLib;
-using System.Net;
 using System.IO;
+using Tayou;
+using ABI_RC.Core.Networking.IO.Social;
 
 namespace Tayou
 {
@@ -24,19 +20,27 @@ namespace Tayou
         private const string SettingFriendsColor = "FriendsColor";
         private const string SettingLegendColor = "LegendColor";
         private const string SettingGuideColor = "GuideColor";
+        private const string SettingDefaultColorTalking = "TalkingDefaultColor";
+        private const string SettingFriendsColorTalking = "TalkingFriendsColor";
+        private const string SettingLegendColorTalking = "TalkingLegendColor";
+        private const string SettingGuideColorTalking = "TalkingGuideColor";
+        private const string SettingShowFriendIcon = "ShowFriendIcon";
+        private const string SettingShowMicIcon = "ShowMicIcon";
         private const string SettingNoBackground = "NoBackground";
-        //private const string SettingModeratorColor = "ModeratorColor";
-        //private const string SettingDeveloperColor = "DeveloperColor";
         private const string SettingImagesUnpacked = "ImagesUnpacked";
 
-        public static MelonPreferences_Entry<bool> ourEnabled;
-        public static MelonPreferences_Entry<Color32> ourDefaultColor;
-        public static MelonPreferences_Entry<Color32> ourFriendsColor;
-        public static MelonPreferences_Entry<Color32> ourLegendColor;
-        public static MelonPreferences_Entry<Color32> ourGuideColor;
+        public static MelonPreferences_Entry<bool> enabled;
+        public static MelonPreferences_Entry<Color32> defaultColor;
+        public static MelonPreferences_Entry<Color32> friendsColor;
+        public static MelonPreferences_Entry<Color32> legendColor;
+        public static MelonPreferences_Entry<Color32> guideColor;
+        public static MelonPreferences_Entry<Color32> talkingDefaultColor;
+        public static MelonPreferences_Entry<Color32> talkingFriendsColor;
+        public static MelonPreferences_Entry<Color32> talkingLegendColor;
+        public static MelonPreferences_Entry<Color32> talkingGuideColor;
+        public static MelonPreferences_Entry<bool> showFriendIcon;
+        public static MelonPreferences_Entry<bool> showMicIcon;
         public static MelonPreferences_Entry<bool> noBackground;
-        //public static MelonPreferences_Entry<Color> ourModeratorColor;
-        //public static MelonPreferences_Entry<Color> ourDeveloperColor;
         public static MelonPreferences_Entry<bool> imagesUnpacked;
         public static Sprite backgroundImage;
         public static Sprite profileBackgroundImage;
@@ -51,22 +55,25 @@ namespace Tayou
         {
 
             var category = MelonPreferences.CreateCategory(SettingsCategory, "Custom Nameplates");
-            ourEnabled =            category.CreateEntry(SettingEnableMod,      true, "Enabled");
-            ourDefaultColor =       category.CreateEntry(SettingDefaultColor,   (Color32)new Color(0.3f, 0.3f, 0.3f, 1f), "Default Color");
-            ourFriendsColor =       category.CreateEntry(SettingFriendsColor,   (Color32)new Color(0.6f, 0.6f, 0f, 1f), "Friends Color");
-            ourLegendColor =        category.CreateEntry(SettingLegendColor,    (Color32)new Color(0.5f, 0.5f, 0.125f, 1f), "Legend Color");
-            ourGuideColor =         category.CreateEntry(SettingGuideColor,     (Color32)new Color(1f, 0.3f, 0f, 1f), "Guide Color");
-            noBackground =          category.CreateEntry(SettingNoBackground,   false, "No Background", "This doesn't brighten colors, so some names wwould be hard to see");
-            //ourModeratorColor =     category.CreateEntry(SettingModeratorColor, new Color(0.5f, 0f, 0f, 1f), "Moderator Color");
-            //ourDeveloperColor =     category.CreateEntry(SettingDeveloperColor, new Color(1f, 0f, 0f, 1f), "Developer Color");
-            imagesUnpacked =        category.CreateEntry(SettingImagesUnpacked, false, "Images Cached", "Indicates if the packaged images have been extracted, only set to true if you want to overwrite your custom images, or if you (accidently) removed them", true);
+            enabled =               category.CreateEntry(SettingEnableMod,              true, "Enabled");
+            defaultColor =          category.CreateEntry(SettingDefaultColor,           new Color32(75, 75, 75, 150), "Default Color");
+            friendsColor =          category.CreateEntry(SettingFriendsColor,           new Color32(153, 153, 0, 50), "Friends Color");
+            legendColor =           category.CreateEntry(SettingLegendColor,            new Color32(50, 150, 147, 50), "Legend Color");
+            guideColor =            category.CreateEntry(SettingGuideColor,             new Color32(221, 90, 0, 50), "Guide Color");
+            talkingDefaultColor =   category.CreateEntry(SettingDefaultColorTalking,    new Color32(100, 100, 100, 200), "Default Color when talking");
+            talkingFriendsColor =   category.CreateEntry(SettingFriendsColorTalking,    new Color32(153, 153, 0, 150), "Friends Color when talking");
+            talkingLegendColor =    category.CreateEntry(SettingLegendColorTalking,     new Color32(50, 150, 147, 150), "Legend Color when talking");
+            talkingGuideColor =     category.CreateEntry(SettingGuideColorTalking,      new Color32(221, 90, 0, 150), "Guide Color when talking");
+            showFriendIcon =        category.CreateEntry(SettingShowFriendIcon,         true, "Show Friend Icon", "Shows a icon next to the nameplate, that indicates that the player is a friend");
+            showMicIcon =           category.CreateEntry(SettingShowMicIcon,            true, "Show Mic Icon", "Shows an extra mic icon next to the nameplate, which indicates if the player is talking");
+            noBackground =          category.CreateEntry(SettingNoBackground,           false, "No Background", "This doesn't brighten colors, so some names would be hard to see");
+            imagesUnpacked =        category.CreateEntry(SettingImagesUnpacked,         false, "Images Cached", "Indicates if the packaged images have been extracted, only set to true if you want to overwrite your custom images, or if you (accidently) removed them", true);
 
             if (!imagesUnpacked.EditedValue)
                 CacheImages();
 
             LoadImages();
-            HPatch();
-            MelonCoroutines.Start(WaitForUi());
+            Instance.PatchAll();
         }
 
         private void LoadImages()
@@ -95,44 +102,120 @@ namespace Tayou
             Properties.Resources.friend.Save("UserData/CustomNameplates/" + "friend.png");
             imagesUnpacked.EditedValue = true;
         }
+    }
+}
 
-        private IEnumerator WaitForUi()
+[HarmonyPatch(typeof(PlayerNameplate), nameof(PlayerNameplate.UpdateNamePlate))]
+class PlayerNameplatePatch1
+{
+    public static Image micOnImage;
+    public static Image micOffImage;
+
+    static void Postfix(PlayerNameplate __instance)
+    {
+        // calling this to get custom colors to apply initially without duping code
+        // I'm not sure when TalkerState() is called by default, so I'm just doing this to be safe.
+        __instance.TalkerState(0);
+
+
+
+
+        // patch background image
+        __instance.nameplateBackground.sprite = CustomNameplatesMod.backgroundImage;
+        __instance.nameplateBackground.type = Image.Type.Sliced;
+        __instance.nameplateBackground.pixelsPerUnitMultiplier = 500;
+
+        // patch staff part of background image
+        __instance.staffplateBackground.sprite = CustomNameplatesMod.backgroundImage;
+        __instance.staffplateBackground.type = Image.Type.Sliced;
+        __instance.staffplateBackground.pixelsPerUnitMultiplier = 500;
+        // staff text
+        __instance.staffText.transform.localPosition = new Vector3(-0.08f, 0.2902f, 0f);
+
+        // patch profile mask & background image
+        GameObject _maskGameObject = __instance.transform.Find("Canvas/Content/Image/ObjectMaskSlave/UserImageMask").gameObject;
+        _maskGameObject.GetComponent<Image>().sprite = CustomNameplatesMod.profileBackgroundImage;
+        _maskGameObject.transform.localScale = new Vector3(1.25f, 1.1f, 1);
+
+        Image _backgroundGameObj = __instance.transform.Find("Canvas/Content/Image/ObjectMaskSlave/UserImageMask (1)").GetComponent<Image>();
+        _backgroundGameObj.sprite = CustomNameplatesMod.profileBackgroundImage;
+        _backgroundGameObj.color = __instance.nameplateBackground.color;
+        _backgroundGameObj.transform.SetSiblingIndex(0); // move up, so that the (prior frame, now background) is behind the image
+        _backgroundGameObj.transform.localScale = new Vector3(1.45f, 1.25f, 1);
+
+        // patch friends image / icon
+        if (CustomNameplatesMod.showFriendIcon.EditedValue) {
+            __instance.friendsImage.sprite = CustomNameplatesMod.friendImage;
+            __instance.friendsImage.transform.localScale = new Vector3(0.9f, 0.6f, 1);
+            __instance.friendsImage.transform.localPosition = new Vector3(0.60f, 0.39f, 0);
+        } else {
+            __instance.friendsImage.gameObject.SetActive(false);
+        }
+
+        // set up mic icon
+        if (CustomNameplatesMod.showMicIcon.EditedValue)
         {
-            while (RootLogic.Instance == null) yield return new WaitForSeconds(1f);
-            RootLogic.Instance.comms.OnPlayerStartedSpeaking += PlayerTalking;
-            RootLogic.Instance.comms.OnPlayerStoppedSpeaking += PlayerStopTalking;
+            micOffImage = GameObject.Instantiate(__instance.friendsImage.gameObject, __instance.friendsImage.transform.parent.transform).GetComponent<Image>();
+            micOffImage.sprite = CustomNameplatesMod.micOffImage;
+            micOffImage.enabled = true;
+            micOffImage.transform.localPosition = new Vector3(0.944f, 0.39f, 0);
 
+            micOnImage = GameObject.Instantiate(micOffImage, __instance.friendsImage.transform.parent.transform).GetComponent<Image>();
+            micOnImage.sprite = CustomNameplatesMod.micOnImage;
+            micOnImage.transform.localPosition = new Vector3(0.944f, 0.39f, 0);
+            micOnImage.gameObject.SetActive(false);
+        }
+    }
+}
 
-            LocalPlayerTransform = RootLogic.Instance.localPlayerRoot.transform;
-            yield break;
+[HarmonyPatch(typeof(PlayerNameplate), nameof(PlayerNameplate.TalkerState))]
+class PlayerNameplatePatch2
+{
+    static void Postfix(PlayerNameplate __instance, float amplitude)
+    {
+        Color32 UserColor = __instance.nameplateBackground.color;
+        bool flag = amplitude > 0f;
+
+        bool isFriend = Friends.FriendsWith(__instance.player.ownerId);
+        if (isFriend) {
+            UserColor = (flag ? CustomNameplatesMod.talkingFriendsColor.EditedValue : CustomNameplatesMod.friendsColor.EditedValue);
+        } else {
+            switch (__instance.player.userRank)
+            {
+                default:
+                    UserColor = (flag ? CustomNameplatesMod.talkingDefaultColor.EditedValue : CustomNameplatesMod.defaultColor.EditedValue);
+                    break;
+                case "Legend":
+                    UserColor = (flag ? CustomNameplatesMod.talkingLegendColor.EditedValue : CustomNameplatesMod.legendColor.EditedValue);
+                    break;
+                case "Community Guide":
+                    UserColor = (flag ? CustomNameplatesMod.talkingGuideColor.EditedValue : CustomNameplatesMod.guideColor.EditedValue);
+                    break;
+                case "Moderator":
+                    // Don't overwrite, keep color from OG method -- UserColor = (flag ? new Color32(221, 0, 118, 150) : new Color32(221, 0, 118, 50));
+                    break;
+                case "Developer":
+                    // Don't overwrite, keep color from OG method -- UserColor = (flag ? new Color32(240, 0, 40, 150) : new Color32(240, 0, 40, 50));
+                    break;
+            }
+        }
+        if (PlayerNameplatePatch1.micOnImage != null && CustomNameplatesMod.showMicIcon.EditedValue) {
+            PlayerNameplatePatch1.micOnImage.gameObject.SetActive(flag);
+            PlayerNameplatePatch1.micOffImage.gameObject.SetActive(!flag);
         }
 
-        private NamePlateHandler _handler { get; set; }
-
-        private void PlayerStopTalking(Dissonance.VoicePlayerState obj)
-        {      
-            _handler = GameObject.Find($"/{obj.Name}").transform.Find("[NamePlate]").gameObject.GetComponent<NamePlateHandler>();
-            _handler.BackgroundMask.color = new Color(_handler.UserColor.r, _handler.UserColor.g, _handler.UserColor.b, 0.4f);
-            _handler.BackgroundImageComp.color = new Color(_handler.UserColor.r, _handler.UserColor.g, _handler.UserColor.b, 0.4f);
-            _handler.MicOn.SetActive(false);
-            _handler.MicOff.SetActive(true);
-        }
-        private void PlayerTalking(Dissonance.VoicePlayerState obj)
+        if (CustomNameplatesMod.noBackground.EditedValue)
         {
-            _handler = GameObject.Find($"/{obj.Name}").transform.Find("[NamePlate]").gameObject.GetComponent<NamePlateHandler>();
-            _handler.MicOn.SetActive(true);
-            _handler.MicOff.SetActive(false);
-            if (obj.Amplitude > 0.1f) return;
-            _handler.BackgroundMask.color = new Color(_handler.UserColor.r, _handler.UserColor.g, _handler.UserColor.b, 1f);
-            _handler.BackgroundImageComp.color = new Color(_handler.UserColor.r, _handler.UserColor.g, _handler.UserColor.b, 1f);
+            __instance.transform.Find("Canvas/Content/TMP:Username").gameObject.GetComponent<TMPro.TextMeshProUGUI>().color = (
+                __instance.player.userRank == "Developer" ||
+                __instance.player.userRank == "Moderator" ||
+                __instance.player.userRank == "Community Guide" ||
+                __instance.player.userRank == "Legend" ||
+                isFriend) ? UserColor : (Color32)Color.white;
+            UserColor = new Color32(0, 0, 0, 0);
         }
 
-        private static void HPatch() =>
-            Instance.Patch(typeof(PlayerNameplate).GetMethod(nameof(PlayerNameplate.UpdateNamePlate)),null, typeof(CustomNameplatesMod).GetMethod(nameof(PostFix), System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).ToNewHarmonyMethod());
-
-        private static void PostFix(PlayerNameplate __instance)
-        {
-            __instance.gameObject.AddComponent<NamePlateHandler>().playerNameplate = __instance;
-        }
+        __instance.nameplateBackground.color = UserColor;
+        __instance.staffplateBackground.color = UserColor;
     }
 }
