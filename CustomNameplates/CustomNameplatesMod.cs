@@ -64,8 +64,8 @@ namespace Tayou
             talkingFriendsColor =   category.CreateEntry(SettingFriendsColorTalking,    new Color32(153, 153, 0, 150), "Friends Color when talking");
             talkingLegendColor =    category.CreateEntry(SettingLegendColorTalking,     new Color32(50, 150, 147, 150), "Legend Color when talking");
             talkingGuideColor =     category.CreateEntry(SettingGuideColorTalking,      new Color32(221, 90, 0, 150), "Guide Color when talking");
-            showFriendIcon =        category.CreateEntry(SettingShowFriendIcon,         true, "Show Friend Icon", "Shows a icon next to the nameplate, that indicates that the player is a friend");
-            showMicIcon =           category.CreateEntry(SettingShowMicIcon,            true, "Show Mic Icon", "Shows an extra mic icon next to the nameplate, which indicates if the player is talking");
+            showFriendIcon =        category.CreateEntry(SettingShowFriendIcon,         false, "Show Friend Icon", "Shows a icon next to the nameplate, that indicates that the player is a friend");
+            showMicIcon =           category.CreateEntry(SettingShowMicIcon,            false, "Show Mic Icon", "[kinda broken]Shows an extra mic icon next to the nameplate, which indicates if the player is talking");
             noBackground =          category.CreateEntry(SettingNoBackground,           false, "No Background", "This doesn't brighten colors, so some names would be hard to see");
             imagesUnpacked =        category.CreateEntry(SettingImagesUnpacked,         false, "Images Cached", "Indicates if the packaged images have been extracted, only set to true if you want to overwrite your custom images, or if you (accidently) removed them", true);
 
@@ -105,13 +105,15 @@ namespace Tayou
     }
 }
 
-[HarmonyPatch(typeof(PlayerNameplate), nameof(PlayerNameplate.UpdateNamePlate))]
-class PlayerNameplatePatch1
+[HarmonyPatch]
+class PlayerNameplatePatch
 {
     public static Image micOnImage;
     public static Image micOffImage;
 
-    static void Postfix(PlayerNameplate __instance)
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(PlayerNameplate), nameof(PlayerNameplate.UpdateNamePlate))]
+    static void UpdateNamePlatePatch(PlayerNameplate __instance)
     {
         // calling this to get custom colors to apply initially without duping code
         // I'm not sure when TalkerState() is called by default, so I'm just doing this to be safe.
@@ -166,12 +168,10 @@ class PlayerNameplatePatch1
             micOnImage.gameObject.SetActive(false);
         }
     }
-}
 
-[HarmonyPatch(typeof(PlayerNameplate), nameof(PlayerNameplate.TalkerState))]
-class PlayerNameplatePatch2
-{
-    static void Postfix(PlayerNameplate __instance, float amplitude)
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(PlayerNameplate), nameof(PlayerNameplate.TalkerState))]
+    static void TalkerStatePatch(PlayerNameplate __instance, float amplitude)
     {
         Color32 UserColor = __instance.nameplateBackground.color;
         bool flag = amplitude > 0f;
@@ -199,9 +199,9 @@ class PlayerNameplatePatch2
                     break;
             }
         }
-        if (PlayerNameplatePatch1.micOnImage != null && CustomNameplatesMod.showMicIcon.EditedValue) {
-            PlayerNameplatePatch1.micOnImage.gameObject.SetActive(flag);
-            PlayerNameplatePatch1.micOffImage.gameObject.SetActive(!flag);
+        if (micOnImage != null && CustomNameplatesMod.showMicIcon.EditedValue) {
+            micOnImage.gameObject.SetActive(flag);
+            micOffImage.gameObject.SetActive(!flag);
         }
 
         if (CustomNameplatesMod.noBackground.EditedValue)
