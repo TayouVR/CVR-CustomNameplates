@@ -108,13 +108,14 @@ namespace Tayou
 [HarmonyPatch]
 class PlayerNameplatePatch
 {
-    public static Image micOnImage;
-    public static Image micOffImage;
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(PlayerNameplate), nameof(PlayerNameplate.UpdateNamePlate))]
     static void UpdateNamePlatePatch(PlayerNameplate __instance)
     {
+        CustomNameplateHelper customNameplateHelper = null;
+        if (__instance.gameObject.GetComponent<CustomNameplateHelper>() == null)
+            customNameplateHelper = __instance.gameObject.AddComponent<CustomNameplateHelper>();
         // calling this to get custom colors to apply initially without duping code
         // I'm not sure when TalkerState() is called by default, so I'm just doing this to be safe.
         __instance.TalkerState(0);
@@ -155,17 +156,19 @@ class PlayerNameplatePatch
         }
 
         // set up mic icon
-        if (CustomNameplatesMod.showMicIcon.EditedValue)
+        if (CustomNameplatesMod.showMicIcon.EditedValue && customNameplateHelper != null)
         {
-            micOffImage = GameObject.Instantiate(__instance.friendsImage.gameObject, __instance.friendsImage.transform.parent.transform).GetComponent<Image>();
-            micOffImage.sprite = CustomNameplatesMod.micOffImage;
-            micOffImage.enabled = true;
-            micOffImage.transform.localPosition = new Vector3(0.944f, 0.39f, 0);
+            customNameplateHelper.micOffImage = GameObject.Instantiate(__instance.friendsImage.gameObject, __instance.friendsImage.transform.parent.transform).GetComponent<Image>();
+            customNameplateHelper.micOffImage.gameObject.name = "MicOffIndicator";
+            customNameplateHelper.micOffImage.sprite = CustomNameplatesMod.micOffImage;
+            customNameplateHelper.micOffImage.enabled = true;
+            customNameplateHelper.micOffImage.transform.localPosition = new Vector3(0.944f, 0.39f, 0);
 
-            micOnImage = GameObject.Instantiate(micOffImage, __instance.friendsImage.transform.parent.transform).GetComponent<Image>();
-            micOnImage.sprite = CustomNameplatesMod.micOnImage;
-            micOnImage.transform.localPosition = new Vector3(0.944f, 0.39f, 0);
-            micOnImage.gameObject.SetActive(false);
+            customNameplateHelper.micOnImage = GameObject.Instantiate(customNameplateHelper.micOffImage, __instance.friendsImage.transform.parent.transform).GetComponent<Image>();
+            customNameplateHelper.micOnImage.gameObject.name = "MicOnIndicator";
+            customNameplateHelper.micOnImage.sprite = CustomNameplatesMod.micOnImage;
+            customNameplateHelper.micOnImage.transform.localPosition = new Vector3(0.944f, 0.39f, 0);
+            customNameplateHelper.micOnImage.gameObject.SetActive(false);
         }
     }
 
@@ -199,9 +202,8 @@ class PlayerNameplatePatch
                     break;
             }
         }
-        if (micOnImage != null && CustomNameplatesMod.showMicIcon.EditedValue) {
-            micOnImage.gameObject.SetActive(flag);
-            micOffImage.gameObject.SetActive(!flag);
+        if (CustomNameplatesMod.showMicIcon.EditedValue) {
+            __instance.GetComponent<CustomNameplateHelper>().SetMicImage(flag);
         }
 
         if (CustomNameplatesMod.noBackground.EditedValue)
@@ -217,5 +219,17 @@ class PlayerNameplatePatch
 
         __instance.nameplateBackground.color = UserColor;
         __instance.staffplateBackground.color = UserColor;
+    }
+}
+
+public class CustomNameplateHelper : MonoBehaviour {
+    public Image micOnImage;
+    public Image micOffImage;
+
+    public void SetMicImage(bool state) {
+        if (micOnImage != null && micOffImage != null) {
+            micOnImage.gameObject.SetActive(state);
+            micOffImage.gameObject.SetActive(!state);
+        }
     }
 }
