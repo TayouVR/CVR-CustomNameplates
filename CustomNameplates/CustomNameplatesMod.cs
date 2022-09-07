@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using MelonLoader;
 using ABI_RC.Core.Player;
 using ABI_RC.Core;
@@ -10,10 +10,11 @@ using System.IO;
 using Tayou;
 using ABI_RC.Core.Networking.IO.Social;
 
-namespace Tayou
-{
-    public class CustomNameplatesMod : MelonMod
-    {
+[assembly: MelonInfo(typeof(CustomNameplatesMod), "Custom Nameplates", "1.0.5", "Tayou")]
+[assembly: MelonColor(ConsoleColor.Yellow)]
+[assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
+namespace Tayou {
+    public class CustomNameplatesMod : MelonMod {
         private const string SettingsCategory = "CustomNameplates";
         private const string SettingEnableMod = "Enabled";
         private const string SettingDefaultColor = "DefaultColor";
