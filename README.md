@@ -10,10 +10,17 @@ Nameplates will glow and the microphone icon will change when someone is talking
 
 ## TODO
 
-- enable/disable toggle
-  - stop modifying new nameplates
-  - reset all modified plates to default
-- live settings update (adjust colors of existing nameplates in running game)
+- [ ] enable/disable toggle
+  - [ ] stop modifying new nameplates
+  - [ ] reset all modified plates to default
+- [ ] allow multiple "Profiles" to exist at once
+  - [ ] create VRC (2022) lookalike Profile
+  - [ ] create VRC (2018) lookalike Profile
+  - [ ] create VRC (2020) lookalike Profile
+- [ ] Refactor the code a 3rd time for lolz
+
+If you feel like you can do any of the above tasks, feel free to PR this repo or DM me about any changes you wish to do. 
+I am reachable via @Tayou:matrix.org, Tayou#4951, https://t.me/TayouVR
 
 ## Installation
 
@@ -24,7 +31,7 @@ Then download the .dll [from here in the release section](https://github.com/Tay
 
 **Warning**: Mods are provided as is and there is no guarantee of working.
 
-### Customazation:
+## Customazation:
 The Colors can be changed via MelonPreferences, either via the file or via another mod like 
 
 [![image](https://user-images.githubusercontent.com/31988415/186771618-d0a75a1d-0310-4f9b-9c7c-a146cf25aa1f.png)](https://github.com/sinai-dev/MelonPreferencesManager)
