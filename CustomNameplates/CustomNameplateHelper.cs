@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using ABI_RC.Core.Networking.IO.Social;
+using MelonLoader;
 
 namespace Tayou {
     public class CustomNameplateHelper : MonoBehaviour {
@@ -14,9 +15,9 @@ namespace Tayou {
 
         private PlayerNameplate playerNameplate;
 
-        public PlayerNameplate PlayerNameplate { set => playerNameplate = value; }
-
-        public void Init() {
+        public void Init(PlayerNameplate playerNameplateInstance) {
+            playerNameplate = playerNameplateInstance;
+            if (CustomNameplatesMod.debugLogging.EditedValue) MelonLogger.Msg("Patching Nameplate for " + playerNameplate.player.userName + "[" + playerNameplate.player.name + "] Role: " + (Friends.FriendsWith(playerNameplate.player.ownerId) ? "Friend" : playerNameplate.player.userRank));
             SaveOriginalData();
             ToggleModEnabledState(CustomNameplatesMod.enabled.EditedValue);
             
@@ -102,17 +103,16 @@ namespace Tayou {
         /// <summary>
         /// Update Function for namplate, called every frame via PlayerNameplate.TalkerState();
         /// </summary>
-        public void UpdateNameplate(float amplitude) {
+        public void UpdateNameplate() {
 
             // wait for InitializeNameplate to finish
             if (!isInitialized)
                 return;
 
-            bool flag = amplitude > 0f;
-            GetNameplateColor(out Color32 backgroundColor, out Color32 textColor, flag);
+            GetNameplateColor(out Color32 backgroundColor, out Color32 textColor);
 
             playerNameplate.friendsImage.gameObject.SetActive(CustomNameplatesMod.showFriendIcon.EditedValue);
-            SetMicImage(flag && CustomNameplatesMod.showMicIcon.EditedValue);
+            SetMicImage(playerNameplate.player.IsTalking && CustomNameplatesMod.showMicIcon.EditedValue);
 
             playerNameplate.transform.Find("Canvas/Content/TMP:Username").gameObject.GetComponent<TMPro.TextMeshProUGUI>().color = textColor;
 
@@ -122,60 +122,36 @@ namespace Tayou {
             //MelonLogger.Msg("\n should be Color: " + backgroundColor.ToString() + "\n is Color: " + playerNameplate.nameplateBackground.color);
         }
 
-        public void GetNameplateColor(out Color32 backgroundColor, out Color32 textColor, bool talking = false) {
+        public void GetNameplateColor(out Color32 backgroundColor, out Color32 textColor) {
 
             // get default color, which was defined in original TalkerState()
-            Color32 UserColor = playerNameplate.nameplateBackground.color;
+            Color32 originalColor = playerNameplate.nameplateBackground.color;
 
-            bool isFriend = Friends.FriendsWith(playerNameplate.player.ownerId);
-
-            if (!CustomNameplatesMod.noBackground.EditedValue) {
-                if (isFriend) {
-                    backgroundColor = (talking ? CustomNameplatesMod.talkingFriendsColor.EditedValue : CustomNameplatesMod.friendsColor.EditedValue);
-                } else {
-                    switch (playerNameplate.player.userRank) {
-                        default:
-                            backgroundColor = (talking ? CustomNameplatesMod.talkingDefaultColor.EditedValue : CustomNameplatesMod.defaultColor.EditedValue);
-                            break;
-                        case "Legend":
-                            backgroundColor = (talking ? CustomNameplatesMod.talkingLegendColor.EditedValue : CustomNameplatesMod.legendColor.EditedValue);
-                            break;
-                        case "Community Guide":
-                            backgroundColor = (talking ? CustomNameplatesMod.talkingGuideColor.EditedValue : CustomNameplatesMod.guideColor.EditedValue);
-                            break;
-                        case "Moderator":
-                            backgroundColor = UserColor; // Don't overwrite, keep color from OG method -- UserColor = (talking ? new Color32(221, 0, 118, 150) : new Color32(221, 0, 118, 50));
-                            break;
-                        case "Developer":
-                            backgroundColor = UserColor; // Don't overwrite, keep color from OG method -- UserColor = (talking ? new Color32(240, 0, 40, 150) : new Color32(240, 0, 40, 50));
-                            break;
-                    }
-                }
-                textColor = (Color32)Color.white;
+            Color32 nameplateColor;
+            if (Friends.FriendsWith(playerNameplate.player.ownerId)) {
+                nameplateColor = (playerNameplate.player.IsTalking ? CustomNameplatesMod.talkingFriendsColor.EditedValue : CustomNameplatesMod.friendsColor.EditedValue);
             } else {
-                backgroundColor = new Color32(0, 0, 0, 0);
-                if (isFriend) {
-                    textColor = (talking ? CustomNameplatesMod.talkingFriendsColor.EditedValue : CustomNameplatesMod.friendsColor.EditedValue);
-                } else {
-                    switch (playerNameplate.player.userRank) {
-                        default:
-                            textColor = (talking ? new Color32(255, 255, 255, 255) : new Color32(210, 210, 210, 210));
-                            break;
-                        case "Legend":
-                            textColor = (talking ? CustomNameplatesMod.talkingLegendColor.EditedValue : CustomNameplatesMod.legendColor.EditedValue);
-                            break;
-                        case "Community Guide":
-                            textColor = (talking ? CustomNameplatesMod.talkingGuideColor.EditedValue : CustomNameplatesMod.guideColor.EditedValue);
-                            break;
-                        case "Moderator":
-                            textColor = UserColor; // Don't overwrite, keep color from OG method -- UserColor = (talking ? new Color32(221, 0, 118, 150) : new Color32(221, 0, 118, 50));
-                            break;
-                        case "Developer":
-                            textColor = UserColor; // Don't overwrite, keep color from OG method -- UserColor = (talking ? new Color32(240, 0, 40, 150) : new Color32(240, 0, 40, 50));
-                            break;
-                    }
+                switch (playerNameplate.player.userRank) {
+                    default:
+                        nameplateColor = (playerNameplate.player.IsTalking ? CustomNameplatesMod.talkingDefaultColor.EditedValue : CustomNameplatesMod.defaultColor.EditedValue);
+                        break;
+                    case "Legend":
+                        nameplateColor = (playerNameplate.player.IsTalking ? CustomNameplatesMod.talkingLegendColor.EditedValue : CustomNameplatesMod.legendColor.EditedValue);
+                        break;
+                    case "Community Guide":
+                        nameplateColor = (playerNameplate.player.IsTalking ? CustomNameplatesMod.talkingGuideColor.EditedValue : CustomNameplatesMod.guideColor.EditedValue);
+                        break;
+                    case "Moderator":
+                        nameplateColor = originalColor; // Don't overwrite, keep color from OG method -- nameplateColor = (playerNameplate.player.IsTalking ? new Color32(221, 0, 118, 150) : new Color32(221, 0, 118, 50));
+                        break;
+                    case "Developer":
+                        nameplateColor = originalColor; // Don't overwrite, keep color from OG method -- nameplateColor = (playerNameplate.player.IsTalking ? new Color32(240, 0, 40, 150) : new Color32(240, 0, 40, 50));
+                        break;
                 }
             }
+
+            backgroundColor = CustomNameplatesMod.noBackground.EditedValue ? new Color32(0, 0, 0, 0) : nameplateColor;
+            textColor = CustomNameplatesMod.noBackground.EditedValue ? nameplateColor : (Color32)Color.white;
         }
 
         public void SetMicImage(bool state) {

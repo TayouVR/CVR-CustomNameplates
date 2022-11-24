@@ -11,20 +11,6 @@ using System.Collections.Generic;
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
 namespace Tayou {
     public class CustomNameplatesMod : MelonMod {
-        private const string SettingsCategory = "CustomNameplates";
-        private const string SettingEnableMod = "Enabled";
-        private const string SettingDefaultColor = "DefaultColor";
-        private const string SettingFriendsColor = "FriendsColor";
-        private const string SettingLegendColor = "LegendColor";
-        private const string SettingGuideColor = "GuideColor";
-        private const string SettingDefaultColorTalking = "TalkingDefaultColor";
-        private const string SettingFriendsColorTalking = "TalkingFriendsColor";
-        private const string SettingLegendColorTalking = "TalkingLegendColor";
-        private const string SettingGuideColorTalking = "TalkingGuideColor";
-        private const string SettingShowFriendIcon = "ShowFriendIcon";
-        private const string SettingShowMicIcon = "ShowMicIcon";
-        private const string SettingNoBackground = "NoBackground";
-        private const string SettingImagesUnpacked = "ImagesUnpacked";
 
         public static MelonPreferences_Entry<bool> enabled;
         public static MelonPreferences_Entry<Color32> defaultColor;
@@ -39,6 +25,8 @@ namespace Tayou {
         public static MelonPreferences_Entry<bool> showMicIcon;
         public static MelonPreferences_Entry<bool> noBackground;
         public static MelonPreferences_Entry<bool> imagesUnpacked;
+        public static MelonPreferences_Entry<string> profile; //TODO: implement
+        public static MelonPreferences_Entry<bool> debugLogging;
 
         public static NameplateStyleData data_original;
         public static NameplateStyleData data_custom;
@@ -47,27 +35,28 @@ namespace Tayou {
 
 
         private static HarmonyLib.Harmony Instance  = new HarmonyLib.Harmony(Guid.NewGuid().ToString());
-        public static Transform LocalPlayerTransform { get; set; }
         public override void OnApplicationStart() {
             data_original = new NameplateStyleData();
             data_custom = new CustomNameplateStyleData();
 
-            var category = MelonPreferences.CreateCategory(SettingsCategory, "Custom Nameplates");
-            enabled =               category.CreateEntry(SettingEnableMod,              true, "Enabled");
-            category.CreateEntry("----- Colors -----", false, "----- Colors -----", true);
-            defaultColor =          category.CreateEntry(SettingDefaultColor,           new Color32(75, 75, 75, 150), "Default Color");
-            friendsColor =          category.CreateEntry(SettingFriendsColor,           new Color32(153, 153, 0, 50), "Friends Color");
-            legendColor =           category.CreateEntry(SettingLegendColor,            new Color32(50, 150, 147, 50), "Legend Color");
-            guideColor =            category.CreateEntry(SettingGuideColor,             new Color32(221, 90, 0, 50), "Guide Color");
-            talkingDefaultColor =   category.CreateEntry(SettingDefaultColorTalking,    new Color32(100, 100, 100, 200), "Default Color when talking");
-            talkingFriendsColor =   category.CreateEntry(SettingFriendsColorTalking,    new Color32(153, 153, 0, 150), "Friends Color when talking");
-            talkingLegendColor =    category.CreateEntry(SettingLegendColorTalking,     new Color32(50, 150, 147, 150), "Legend Color when talking");
-            talkingGuideColor =     category.CreateEntry(SettingGuideColorTalking,      new Color32(221, 90, 0, 150), "Guide Color when talking");
-            category.CreateEntry("----- Misc Settings -----", false, "----- Misc Settings -----", true);
-            showFriendIcon =        category.CreateEntry(SettingShowFriendIcon,         false, "Show Friend Icon", "Shows a icon next to the nameplate, that indicates that the player is a friend.");
-            showMicIcon =           category.CreateEntry(SettingShowMicIcon,            false, "Show Mic Icon", "[kinda broken]Shows an extra mic icon next to the nameplate, which indicates if the player is talking.");
-            noBackground =          category.CreateEntry(SettingNoBackground,           false, "No Background", "Hide Background Panels and color Nameplate Text instead. This might be hard to see in some circumstances.");
-            imagesUnpacked =        category.CreateEntry(SettingImagesUnpacked,         false, "Images Cached", "Indicates if the packaged images have been extracted, only set to true if you want to overwrite your custom images, or if you (accidently) removed them.", true);
+            var category = MelonPreferences.CreateCategory("CustomNameplates", "Custom Nameplates");
+            enabled =               category.CreateEntry("Enabled",                 true, "Enabled");
+                                    category.CreateEntry("----- Colors -----",      false, "----- Colors -----", true);
+            defaultColor =          category.CreateEntry("DefaultColor",            new Color32(75, 75, 75, 150), "Default Color");
+            friendsColor =          category.CreateEntry("FriendsColor",            new Color32(153, 153, 0, 50), "Friends Color");
+            legendColor =           category.CreateEntry("LegendColor",             new Color32(50, 150, 147, 50), "Legend Color");
+            guideColor =            category.CreateEntry("GuideColor",              new Color32(221, 90, 0, 50), "Guide Color");
+            talkingDefaultColor =   category.CreateEntry("TalkingDefaultColor",     new Color32(100, 100, 100, 200), "Default Color when talking");
+            talkingFriendsColor =   category.CreateEntry("TalkingFriendsColor",     new Color32(153, 153, 0, 150), "Friends Color when talking");
+            talkingLegendColor =    category.CreateEntry("TalkingLegendColor",      new Color32(50, 150, 147, 150), "Legend Color when talking");
+            talkingGuideColor =     category.CreateEntry("TalkingGuideColor",       new Color32(221, 90, 0, 150), "Guide Color when talking");
+                                    category.CreateEntry("----- Misc Settings -----", false, "----- Misc Settings -----", true);
+            showFriendIcon =        category.CreateEntry("ShowFriendIcon",          false, "Show Friend Icon", "Shows a icon next to the nameplate, that indicates that the player is a friend.");
+            showMicIcon =           category.CreateEntry("ShowMicIcon",             false, "Show Mic Icon", "Shows an extra mic icon next to the nameplate, which indicates if the player is talking.");
+            noBackground =          category.CreateEntry("NoBackground",            false, "No Background", "Hide Background Panels and color Nameplate Text instead. This might be hard to see in some circumstances.");
+            imagesUnpacked =        category.CreateEntry("ImagesUnpacked",          false, "Images Cached", "Indicates if the packaged images have been extracted, only set to true if you want to overwrite your custom images, or if you (accidently) removed them.", true);
+                                    category.CreateEntry("----- Debug -----", false, "----- Debug -----", true);
+            debugLogging =          category.CreateEntry("DebugLogging", false, "Debug Logging", "Prints various info to the melon loader console for debug purposes.");
 
             if (!imagesUnpacked.EditedValue)
                 CacheImages();
@@ -76,14 +65,15 @@ namespace Tayou {
             Instance.PatchAll();
         }
 
-        private void LoadImages()
-        {
-            CustomNameplatesMod.data_custom.backgroundImage = LoadImage("UserData/CustomNameplates/" + "background.png", new Vector4(255, 0, 255, 0));
-            CustomNameplatesMod.data_custom.staffBackgroundImage = LoadImage("UserData/CustomNameplates/" + "background.png", new Vector4(255, 0, 255, 0)); //TODO: add extra image for staff plate
-            CustomNameplatesMod.data_custom.profileBackgroundImage = LoadImage("UserData/CustomNameplates/" + "profileIcon.png");
-            CustomNameplatesMod.data_custom.micOnImage = LoadImage("UserData/CustomNameplates/" + "micOn.png");
-            CustomNameplatesMod.data_custom.micOffImage = LoadImage("UserData/CustomNameplates/" + "micOff.png");
-            CustomNameplatesMod.data_custom.friendImage = LoadImage("UserData/CustomNameplates/" + "friend.png");
+        private void LoadImages() {
+            string imagesDir = "UserData/CustomNameplates/";
+            if (debugLogging.EditedValue) MelonLogger.Msg("Loading Images from Data Dir: " + imagesDir);
+            CustomNameplatesMod.data_custom.backgroundImage = LoadImage(Path.Combine(imagesDir, "background.png"), new Vector4(255, 0, 255, 0));
+            CustomNameplatesMod.data_custom.staffBackgroundImage = LoadImage(Path.Combine(imagesDir, "background.png"), new Vector4(255, 0, 255, 0)); //TODO: add extra image for staff plate
+            CustomNameplatesMod.data_custom.profileBackgroundImage = LoadImage(Path.Combine(imagesDir, "profileIcon.png"));
+            CustomNameplatesMod.data_custom.micOnImage = LoadImage(Path.Combine(imagesDir, "micOn.png"));
+            CustomNameplatesMod.data_custom.micOffImage = LoadImage(Path.Combine(imagesDir, "micOff.png"));
+            CustomNameplatesMod.data_custom.friendImage = LoadImage(Path.Combine(imagesDir, "friend.png"));
             Sprite LoadImage(string path, Vector4 border = new Vector4())
             {
                 Texture2D tex = new Texture2D(256, 256);
@@ -94,14 +84,17 @@ namespace Tayou {
 
         private void CacheImages()
         {
-            if (!Directory.Exists("UserData/CustomNameplates"))
-                Directory.CreateDirectory("UserData/CustomNameplates");
-            Properties.Resources.background.Save("UserData/CustomNameplates/" + "background.png");
-            Properties.Resources.background.Save("UserData/CustomNameplates/" + "profileIcon.png");
-            Properties.Resources.micOn.Save("UserData/CustomNameplates/" + "micOn.png");
-            Properties.Resources.micOff.Save("UserData/CustomNameplates/" + "micOff.png");
-            Properties.Resources.friend.Save("UserData/CustomNameplates/" + "friend.png");
+            if (debugLogging.EditedValue) MelonLogger.Msg("Unpacking Images from Mod");
+            string imagesDir = "UserData/CustomNameplates/";
+            if (!Directory.Exists(imagesDir))
+                Directory.CreateDirectory(imagesDir);
+            Properties.Resources.background.Save(Path.Combine(imagesDir, "background.png"));
+            Properties.Resources.background.Save(Path.Combine(imagesDir, "profileIcon.png"));
+            Properties.Resources.micOn.Save(Path.Combine(imagesDir, "micOn.png"));
+            Properties.Resources.micOff.Save(Path.Combine(imagesDir, "micOff.png"));
+            Properties.Resources.friend.Save(Path.Combine(imagesDir, "friend.png"));
             imagesUnpacked.EditedValue = true;
+            if (debugLogging.EditedValue) MelonLogger.Msg("Images Unpacked successfully to " + imagesDir);
         }
     }
 
