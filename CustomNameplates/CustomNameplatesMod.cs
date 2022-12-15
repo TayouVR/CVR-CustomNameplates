@@ -62,7 +62,12 @@ namespace Tayou {
                 CacheImages();
 
             LoadImages();
-            Instance.PatchAll();
+            try {
+                Instance.PatchAll();
+            } catch (Exception e) {
+                MelonLogger.Msg("Harmony Patching Failed with exception, unpatching!\n" + e.Message);
+                Instance.UnpatchSelf();
+            }
         }
 
         private void LoadImages() {
