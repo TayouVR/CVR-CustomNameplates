@@ -5,10 +5,12 @@ using System.IO;
 using Tayou;
 using ABI_RC.Core.Player;
 using System.Collections.Generic;
+using System.Reflection;
 
-[assembly: MelonInfo(typeof(CustomNameplatesMod), "Custom Nameplates", "1.0.5", "Tayou")]
+[assembly: MelonInfo(typeof(CustomNameplatesMod), "Custom Nameplates", "1.1.0", "Tayou")]
 [assembly: MelonColor(ConsoleColor.Yellow)]
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
+[assembly: HarmonyDontPatchAll]
 namespace Tayou {
     public class CustomNameplatesMod : MelonMod {
 
@@ -35,6 +37,17 @@ namespace Tayou {
 
 
         private static HarmonyLib.Harmony Instance  = new HarmonyLib.Harmony(Guid.NewGuid().ToString());
+        
+        private static void ApplyPatches(Type type)
+        {
+            MelonLogger.Msg($"Applying {type.Name} patches!");
+            try {
+                HarmonyLib.Harmony.CreateAndPatchAll(type, BuildInfo.Name + "_Hooks");
+            } catch (Exception e) {
+                MelonLogger.Error($"Failed while patching {type.Name}!\n{e}");
+            }
+        }
+        
         public override void OnApplicationStart() {
             data_original = new NameplateStyleData();
             data_custom = new CustomNameplateStyleData();
@@ -62,12 +75,7 @@ namespace Tayou {
                 CacheImages();
 
             LoadImages();
-            try {
-                Instance.PatchAll();
-            } catch (Exception e) {
-                MelonLogger.Msg("Harmony Patching Failed with exception, unpatching!\n" + e.Message);
-                Instance.UnpatchSelf();
-            }
+            ApplyPatches(typeof(PlayerNameplatePatch));
         }
 
         private void LoadImages() {
@@ -100,6 +108,24 @@ namespace Tayou {
             Properties.Resources.friend.Save(Path.Combine(imagesDir, "friend.png"));
             imagesUnpacked.EditedValue = true;
             if (debugLogging.EditedValue) MelonLogger.Msg("Images Unpacked successfully to " + imagesDir);
+        }
+
+        public static object InvokeMethod(object targetObject, string methodName, params object[] parameters) {
+            return targetObject.GetType()
+                .GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.Invoke(targetObject, parameters);
+        }
+
+        public static object GetField(object targetObject, string fieldName) {
+            return targetObject.GetType()
+                .GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(targetObject);
+        }
+
+        public static object GetProperty(object targetObject, string propertyName) {
+            return targetObject.GetType()
+                .GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(targetObject);
         }
     }
 

@@ -1,7 +1,8 @@
-﻿using ABI_RC.Core.Player;
+using ABI_RC.Core.Player;
 using UnityEngine;
 using UnityEngine.UI;
 using ABI_RC.Core.Networking.IO.Social;
+using ABI_RC.Core.Vivox.Components;
 using MelonLoader;
 
 namespace Tayou {
@@ -101,18 +102,21 @@ namespace Tayou {
         }
 
         /// <summary>
-        /// Update Function for namplate, called every frame via PlayerNameplate.TalkerState();
+        /// Update Function for nameplate, called every frame via PlayerNameplate.UpdateNamePlate();
         /// </summary>
         public void UpdateNameplate() {
-
             // wait for InitializeNameplate to finish
             if (!isInitialized)
                 return;
+            
+            bool isTalking = playerNameplate._tracker != null && 
+                             (VivoxAudioPipeline)CustomNameplatesMod.GetProperty(playerNameplate._tracker, "pipeline") != null && 
+                             ((VivoxAudioPipeline)CustomNameplatesMod.GetProperty(playerNameplate._tracker, "pipeline")).IsActiveSmooth;
 
-            GetNameplateColor(out Color32 backgroundColor, out Color32 textColor);
+            GetNameplateColor(out Color32 backgroundColor, out Color32 textColor, isTalking);
 
             playerNameplate.friendsImage.gameObject.SetActive(CustomNameplatesMod.showFriendIcon.EditedValue);
-            SetMicImage(playerNameplate.player.IsTalking && CustomNameplatesMod.showMicIcon.EditedValue);
+            SetMicImage(isTalking && CustomNameplatesMod.showMicIcon.EditedValue);
 
             playerNameplate.transform.Find("Canvas/Content/TMP:Username").gameObject.GetComponent<TMPro.TextMeshProUGUI>().color = textColor;
 
@@ -122,24 +126,24 @@ namespace Tayou {
             //MelonLogger.Msg("\n should be Color: " + backgroundColor.ToString() + "\n is Color: " + playerNameplate.nameplateBackground.color);
         }
 
-        public void GetNameplateColor(out Color32 backgroundColor, out Color32 textColor) {
+        public void GetNameplateColor(out Color32 backgroundColor, out Color32 textColor, bool isTalking) {
 
-            // get default color, which was defined in original TalkerState()
+            // get default color, which was defined in original UpdateNamePlateColor()
             Color32 originalColor = playerNameplate.nameplateBackground.color;
 
             Color32 nameplateColor;
             if (Friends.FriendsWith(playerNameplate.player.ownerId)) {
-                nameplateColor = (playerNameplate.player.IsTalking ? CustomNameplatesMod.talkingFriendsColor.EditedValue : CustomNameplatesMod.friendsColor.EditedValue);
+                nameplateColor = (isTalking ? CustomNameplatesMod.talkingFriendsColor.EditedValue : CustomNameplatesMod.friendsColor.EditedValue);
             } else {
                 switch (playerNameplate.player.userRank) {
                     default:
-                        nameplateColor = (playerNameplate.player.IsTalking ? CustomNameplatesMod.talkingDefaultColor.EditedValue : CustomNameplatesMod.defaultColor.EditedValue);
+                        nameplateColor = (isTalking ? CustomNameplatesMod.talkingDefaultColor.EditedValue : CustomNameplatesMod.defaultColor.EditedValue);
                         break;
                     case "Legend":
-                        nameplateColor = (playerNameplate.player.IsTalking ? CustomNameplatesMod.talkingLegendColor.EditedValue : CustomNameplatesMod.legendColor.EditedValue);
+                        nameplateColor = (isTalking ? CustomNameplatesMod.talkingLegendColor.EditedValue : CustomNameplatesMod.legendColor.EditedValue);
                         break;
                     case "Community Guide":
-                        nameplateColor = (playerNameplate.player.IsTalking ? CustomNameplatesMod.talkingGuideColor.EditedValue : CustomNameplatesMod.guideColor.EditedValue);
+                        nameplateColor = (isTalking ? CustomNameplatesMod.talkingGuideColor.EditedValue : CustomNameplatesMod.guideColor.EditedValue);
                         break;
                     case "Moderator":
                         nameplateColor = originalColor; // Don't overwrite, keep color from OG method -- nameplateColor = (playerNameplate.player.IsTalking ? new Color32(221, 0, 118, 150) : new Color32(221, 0, 118, 50));
