@@ -1,8 +1,8 @@
 {
   "_id": 81,
   "name": "Custom Nameplates",
-  "modversion": "1.1.0",
-  "gameversion": "2023r171",
+  "modversion": "1.1.1",
+  "gameversion": "2023r171p2",
   "loaderversion": "0.6.1",
   "modtype": "Mod",
   "author": "Tayou",
@@ -14,7 +14,7 @@
   ],
   "requirements": [
   ],
-  "downloadlink": "https://github.com/TayouVR/CVR-CustomNameplates/releases/download/1.1.0/CustomNameplates.dll",
+  "downloadlink": "https://github.com/TayouVR/CVR-CustomNameplates/releases/download/1.1.1/CustomNameplates.dll",
   "sourcelink": "https://github.com/TayouVR/CVR-CustomNameplates",
   "changelog": "Updated for CVR 2023r171",
   "embedcolor": "#009999"
