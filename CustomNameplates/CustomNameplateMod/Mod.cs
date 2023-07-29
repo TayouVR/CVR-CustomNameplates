@@ -1,18 +1,18 @@
 ﻿using System;
-using MelonLoader;
-using UnityEngine;
-using System.IO;
-using Tayou;
-using ABI_RC.Core.Player;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
+using ABI_RC.Core.Player;
+using MelonLoader;
+using Tayou.CustomNameplateMod;
+using UnityEngine;
 
-[assembly: MelonInfo(typeof(CustomNameplatesMod), "Custom Nameplates", "1.1.0", "Tayou")]
+[assembly: MelonInfo(typeof(Mod), "Custom Nameplates", "1.1.0", "Tayou")]
 [assembly: MelonColor(ConsoleColor.Yellow)]
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
 [assembly: HarmonyDontPatchAll]
-namespace Tayou {
-    public class CustomNameplatesMod : MelonMod {
+namespace Tayou.CustomNameplateMod {
+    public class Mod : MelonMod {
 
         public static MelonPreferences_Entry<bool> enabled;
         public static MelonPreferences_Entry<Color32> defaultColor;
@@ -30,17 +30,17 @@ namespace Tayou {
         public static MelonPreferences_Entry<string> profile; //TODO: implement
         public static MelonPreferences_Entry<bool> debugLogging;
 
-        public static NameplateStyleData data_original;
-        public static NameplateStyleData data_custom;
+        public static NameplateStyleData DataOriginal;
+        public static NameplateStyleData DataCustom;
 
-        public static Dictionary<PlayerNameplate, CustomNameplateHelper> customNameplateHelpers = new Dictionary<PlayerNameplate, CustomNameplateHelper>();
+        public static readonly Dictionary<PlayerNameplate, Helper> CustomNameplateHelpers = new Dictionary<PlayerNameplate, Helper>();
 
 
-        private static HarmonyLib.Harmony Instance  = new HarmonyLib.Harmony(Guid.NewGuid().ToString());
+        private static HarmonyLib.Harmony _instance  = new HarmonyLib.Harmony(Guid.NewGuid().ToString());
         
         private static void ApplyPatches(Type type)
         {
-            MelonLogger.Msg($"Applying {type.Name} patches!");
+            ConsoleLog($"Applying {type.Name} patches!");
             try {
                 HarmonyLib.Harmony.CreateAndPatchAll(type, BuildInfo.Name + "_Hooks");
             } catch (Exception e) {
@@ -49,8 +49,8 @@ namespace Tayou {
         }
         
         public override void OnApplicationStart() {
-            data_original = new NameplateStyleData();
-            data_custom = new CustomNameplateStyleData();
+            DataOriginal = new NameplateStyleData();
+            DataCustom = new CustomNameplateStyleData();
 
             var category = MelonPreferences.CreateCategory("CustomNameplates", "Custom Nameplates");
             enabled =               category.CreateEntry("Enabled",                 true, "Enabled");
@@ -78,27 +78,32 @@ namespace Tayou {
             ApplyPatches(typeof(PlayerNameplatePatch));
         }
 
-        private void LoadImages() {
-            string imagesDir = "UserData/CustomNameplates/";
-            if (debugLogging.EditedValue) MelonLogger.Msg("Loading Images from Data Dir: " + imagesDir);
-            CustomNameplatesMod.data_custom.backgroundImage = LoadImage(Path.Combine(imagesDir, "background.png"), new Vector4(255, 0, 255, 0));
-            CustomNameplatesMod.data_custom.staffBackgroundImage = LoadImage(Path.Combine(imagesDir, "background.png"), new Vector4(255, 0, 255, 0)); //TODO: add extra image for staff plate
-            CustomNameplatesMod.data_custom.profileBackgroundImage = LoadImage(Path.Combine(imagesDir, "profileIcon.png"));
-            CustomNameplatesMod.data_custom.micOnImage = LoadImage(Path.Combine(imagesDir, "micOn.png"));
-            CustomNameplatesMod.data_custom.micOffImage = LoadImage(Path.Combine(imagesDir, "micOff.png"));
-            CustomNameplatesMod.data_custom.friendImage = LoadImage(Path.Combine(imagesDir, "friend.png"));
-            Sprite LoadImage(string path, Vector4 border = new Vector4())
-            {
-                Texture2D tex = new Texture2D(256, 256);
-                ImageConversion.LoadImage(tex, File.ReadAllBytes(path));
-                return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 200, 1000u, SpriteMeshType.FullRect, border, false);
+        public static void ConsoleLog(string message, bool debug = false) {
+            if (!debug || debugLogging.EditedValue) {
+                MelonLogger.Msg(message);
             }
         }
 
-        private void CacheImages()
-        {
-            if (debugLogging.EditedValue) MelonLogger.Msg("Unpacking Images from Mod");
-            string imagesDir = "UserData/CustomNameplates/";
+        private static void LoadImages() {
+            const string imagesDir = "UserData/CustomNameplates/";
+            ConsoleLog("Loading Images from Data Dir: " + imagesDir, true);
+            DataCustom.backgroundImage = LoadImage(Path.Combine(imagesDir, "background.png"), new Vector4(255, 0, 255, 0));
+            DataCustom.staffBackgroundImage = LoadImage(Path.Combine(imagesDir, "background.png"), new Vector4(255, 0, 255, 0)); //TODO: add extra image for staff plate
+            DataCustom.profileBackgroundImage = LoadImage(Path.Combine(imagesDir, "profileIcon.png"));
+            DataCustom.micOnImage = LoadImage(Path.Combine(imagesDir, "micOn.png"));
+            DataCustom.micOffImage = LoadImage(Path.Combine(imagesDir, "micOff.png"));
+            DataCustom.friendImage = LoadImage(Path.Combine(imagesDir, "friend.png"));
+        }
+        
+        private static Sprite LoadImage(string path, Vector4 border = new Vector4()) {
+            Texture2D tex = new Texture2D(256, 256);
+            tex.LoadImage(File.ReadAllBytes(path));
+            return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 200, 1000u, SpriteMeshType.FullRect, border, false);
+        }
+
+        private static void CacheImages() {
+            ConsoleLog("Unpacking Images from Mod", true);
+            const string imagesDir = "UserData/CustomNameplates/";
             if (!Directory.Exists(imagesDir))
                 Directory.CreateDirectory(imagesDir);
             Properties.Resources.background.Save(Path.Combine(imagesDir, "background.png"));
@@ -107,7 +112,7 @@ namespace Tayou {
             Properties.Resources.micOff.Save(Path.Combine(imagesDir, "micOff.png"));
             Properties.Resources.friend.Save(Path.Combine(imagesDir, "friend.png"));
             imagesUnpacked.EditedValue = true;
-            if (debugLogging.EditedValue) MelonLogger.Msg("Images Unpacked successfully to " + imagesDir);
+            ConsoleLog("Images Unpacked successfully to " + imagesDir, true);
         }
 
         public static object InvokeMethod(object targetObject, string methodName, params object[] parameters) {
