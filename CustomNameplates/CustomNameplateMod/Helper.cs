@@ -177,6 +177,5 @@ namespace Tayou.CustomNameplateMod {
         public void ToggleModEnabledState(bool modEnabled) {
             InitializeNameplate(modEnabled ? Mod.DataCustom : Mod.DataOriginal);
         }
-
     }
 }

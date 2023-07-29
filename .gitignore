@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Managed Libraries - these should be generated on the local system using script in repo
+ManagedLibs/
+
+# NStrip, for the script
+NStrip.exe
