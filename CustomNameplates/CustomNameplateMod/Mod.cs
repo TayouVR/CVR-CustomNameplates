@@ -7,7 +7,7 @@ using MelonLoader;
 using Tayou.CustomNameplateMod;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(Mod), "Custom Nameplates", "1.1.1", "Tayou")]
+[assembly: MelonInfo(typeof(Mod), "Custom Nameplates", "1.1.2", "Tayou")]
 [assembly: MelonColor(ConsoleColor.Yellow)]
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
 [assembly: HarmonyDontPatchAll]
@@ -29,6 +29,8 @@ namespace Tayou.CustomNameplateMod {
         public static MelonPreferences_Entry<bool> imagesUnpacked;
         public static MelonPreferences_Entry<string> profile; //TODO: implement
         public static MelonPreferences_Entry<bool> debugLogging;
+        
+        const string ImagesDir = "UserData/CustomNameplates/";
 
         public static NameplateStyleData DataOriginal;
         public static NameplateStyleData DataCustom;
@@ -71,7 +73,7 @@ namespace Tayou.CustomNameplateMod {
                                     category.CreateEntry("----- Debug -----", false, "----- Debug -----", true);
             debugLogging =          category.CreateEntry("DebugLogging", false, "Debug Logging", "Prints various info to the melon loader console for debug purposes.");
 
-            if (!imagesUnpacked.EditedValue)
+            if (!imagesUnpacked.EditedValue || !Directory.Exists(ImagesDir))
                 CacheImages();
 
             LoadImages();
@@ -85,14 +87,13 @@ namespace Tayou.CustomNameplateMod {
         }
 
         private static void LoadImages() {
-            const string imagesDir = "UserData/CustomNameplates/";
-            ConsoleLog("Loading Images from Data Dir: " + imagesDir, true);
-            DataCustom.backgroundImage = LoadImage(Path.Combine(imagesDir, "background.png"), new Vector4(255, 0, 255, 0));
-            DataCustom.staffBackgroundImage = LoadImage(Path.Combine(imagesDir, "background.png"), new Vector4(255, 0, 255, 0)); //TODO: add extra image for staff plate
-            DataCustom.profileBackgroundImage = LoadImage(Path.Combine(imagesDir, "profileIcon.png"));
-            DataCustom.micOnImage = LoadImage(Path.Combine(imagesDir, "micOn.png"));
-            DataCustom.micOffImage = LoadImage(Path.Combine(imagesDir, "micOff.png"));
-            DataCustom.friendImage = LoadImage(Path.Combine(imagesDir, "friend.png"));
+            ConsoleLog("Loading Images from Data Dir: " + ImagesDir, true);
+            DataCustom.backgroundImage = LoadImage(Path.Combine(ImagesDir, "background.png"), new Vector4(255, 0, 255, 0));
+            DataCustom.staffBackgroundImage = LoadImage(Path.Combine(ImagesDir, "background.png"), new Vector4(255, 0, 255, 0)); //TODO: add extra image for staff plate
+            DataCustom.profileBackgroundImage = LoadImage(Path.Combine(ImagesDir, "profileIcon.png"));
+            DataCustom.micOnImage = LoadImage(Path.Combine(ImagesDir, "micOn.png"));
+            DataCustom.micOffImage = LoadImage(Path.Combine(ImagesDir, "micOff.png"));
+            DataCustom.friendImage = LoadImage(Path.Combine(ImagesDir, "friend.png"));
         }
         
         private static Sprite LoadImage(string path, Vector4 border = new Vector4()) {
@@ -103,16 +104,15 @@ namespace Tayou.CustomNameplateMod {
 
         private static void CacheImages() {
             ConsoleLog("Unpacking Images from Mod", true);
-            const string imagesDir = "UserData/CustomNameplates/";
-            if (!Directory.Exists(imagesDir))
-                Directory.CreateDirectory(imagesDir);
-            Properties.Resources.background.Save(Path.Combine(imagesDir, "background.png"));
-            Properties.Resources.background.Save(Path.Combine(imagesDir, "profileIcon.png"));
-            Properties.Resources.micOn.Save(Path.Combine(imagesDir, "micOn.png"));
-            Properties.Resources.micOff.Save(Path.Combine(imagesDir, "micOff.png"));
-            Properties.Resources.friend.Save(Path.Combine(imagesDir, "friend.png"));
+            if (!Directory.Exists(ImagesDir))
+                Directory.CreateDirectory(ImagesDir);
+            Properties.Resources.background.Save(Path.Combine(ImagesDir, "background.png"));
+            Properties.Resources.background.Save(Path.Combine(ImagesDir, "profileIcon.png"));
+            Properties.Resources.micOn.Save(Path.Combine(ImagesDir, "micOn.png"));
+            Properties.Resources.micOff.Save(Path.Combine(ImagesDir, "micOff.png"));
+            Properties.Resources.friend.Save(Path.Combine(ImagesDir, "friend.png"));
             imagesUnpacked.EditedValue = true;
-            ConsoleLog("Images Unpacked successfully to " + imagesDir, true);
+            ConsoleLog("Images Unpacked successfully to " + ImagesDir, true);
         }
 
         public static object InvokeMethod(object targetObject, string methodName, params object[] parameters) {
