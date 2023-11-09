@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -7,12 +7,14 @@ using MelonLoader;
 using Tayou.CustomNameplateMod;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(Mod), "Custom Nameplates", "1.1.2", "Tayou")]
+[assembly: MelonInfo(typeof(Mod), "Custom Nameplates", Mod.Version, "Tayou")]
 [assembly: MelonColor(ConsoleColor.Yellow)]
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
 [assembly: HarmonyDontPatchAll]
 namespace Tayou.CustomNameplateMod {
     public class Mod : MelonMod {
+        // When updating the mod, change version here and in manifest.json
+        public const string Version = "1.1.3";
 
         public static MelonPreferences_Entry<bool> enabled;
         public static MelonPreferences_Entry<Color32> defaultColor;
