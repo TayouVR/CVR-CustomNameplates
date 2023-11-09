@@ -1,6 +1,5 @@
 using ABI_RC.Core.Networking.IO.Social;
 using ABI_RC.Core.Player;
-using ABI_RC.Core.Vivox.Components;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -109,16 +108,10 @@ namespace Tayou.CustomNameplateMod {
             if (!isInitialized)
                 return;
 
-            bool isTalking = false;
-            if (playerNameplate._tracker != null) {
-                isTalking = (VivoxAudioPipeline)Mod.GetProperty(playerNameplate._tracker, "pipeline") != null && 
-                            ((VivoxAudioPipeline)Mod.GetProperty(playerNameplate._tracker, "pipeline")).IsActiveSmooth;
-            }
-
-            GetNameplateColor(out Color32 backgroundColor, out Color32 textColor, isTalking);
+            GetNameplateColor(out Color32 backgroundColor, out Color32 textColor, playerNameplate.wasTalking);
 
             playerNameplate.friendsImage.gameObject.SetActive(Mod.showFriendIcon.EditedValue);
-            SetMicImage(isTalking && Mod.showMicIcon.EditedValue);
+            SetMicImage(playerNameplate.wasTalking && Mod.showMicIcon.EditedValue);
 
             playerNameplate.transform.Find("Canvas/Content/TMP:Username").gameObject.GetComponent<TextMeshProUGUI>().color = textColor;
 
